@@ -1,0 +1,121 @@
+%{
+#include <iostream>
+#include <string>
+#include <unordered_map>
+#include <memory>
+#include <fstream>
+#include <streambuf>
+#include <stdlib.h>
+
+#include "code.hpp"
+
+int yylex();
+int yyerror(std::string);
+extern FILE *yyin;
+extern int yylineno;
+int error = 0;
+
+std::shared_ptr<Code> code = std::make_shared<Code>();
+
+%}
+
+%union sem_rec {
+    std::string* pidentifier;
+    long long num;
+}
+
+%start program
+%token VAR TBEGIN END
+%token READ WRITE
+%token ASSIGN
+%token <pidentifier> pidentifier
+%token <num> num
+
+%left PLUS MINUS
+%left TIMES DIV MOD
+
+
+%%
+
+program:        VAR declarations TBEGIN commands END{ printf("1"); } 
+              | TBEGIN commands END { printf("2"); }
+              | VAR { printf("3"); }
+;
+
+declarations:   declarations',' pidentifier                                 
+              | declarations',' pidentifier'['num':'num']'                  
+              | pidentifier                                                 
+              | pidentifier'['num':'num']'                                  
+;              
+
+commands:       commands command
+              | command
+;              
+
+command:        identifier ASSIGN expression';'                             
+              | READ identifier';'                                          
+              | WRITE value';'                                              
+;              
+
+expression:     value                                                       
+              | value PLUS value                                            
+              | value MINUS value                                           
+              | value TIMES value                                           
+              | value DIV value                                             
+              | value MOD value                                             
+;              
+
+value:          num                                                         
+              | identifier                                                  
+;
+
+identifier:     pidentifier                                                 
+              | pidentifier'['pidentifier']'                                
+              | pidentifier'['num']'                                        
+;
+%%
+
+
+int yyerror(std::string str) {
+    std::cerr << str << " at line " << yylineno << std::endl;
+    exit(1);
+}
+
+void return_code(std::vector<std::string> code, std::string file) {
+    std::ofstream fout(file);
+
+    std::vector<std::string>::iterator it;
+
+    for (it = code.begin(); it != code.end(); it++) {
+        fout << *it << std::endl;
+    }
+
+    fout.close();
+}
+
+int main(int argc, char** argv) {
+    if (argc < 3) {
+        std::cerr << "Not enough arguments" << std::endl;
+        std::cout << "compiler [input_file] [output_file]" << std::endl;
+        return 1;
+    }
+
+    yyin = fopen(argv[1], "r");
+
+    if (yyin == nullptr) {
+        return 2;
+    }
+
+    std::cout << "### Starting compilation ###" << std::endl; 
+
+    try {
+        yyparse();
+        return_code(code->get_code(), argv[2]);
+        std::cout << "### Compiled successfully ###" << std::endl;
+    } catch (std::string e) {
+        yyerror(e);
+    }
+    //data->print_symbols();
+
+    return 0;
+}
