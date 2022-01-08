@@ -11,6 +11,11 @@ class Code {
         vector<std::string> code;
     public:
         Code();
+        
         vector<string> get_code();
+        void end_code();
+        
+        // ASSEMBLER COMMANDS
+        void HALT();
   
 };

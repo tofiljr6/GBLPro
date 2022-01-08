@@ -9,18 +9,20 @@
 
 #include "code.hpp"
 
+using namespace std;
+
 int yylex();
-int yyerror(std::string);
+int yyerror(string);
 extern FILE *yyin;
 extern int yylineno;
 int error = 0;
 
-std::shared_ptr<Code> code = std::make_shared<Code>();
+shared_ptr<Code> code = make_shared<Code>();
 
 %}
 
 %union sem_rec {
-    std::string* pidentifier;
+    string* pidentifier;
     long long num;
 }
 
@@ -37,9 +39,8 @@ std::shared_ptr<Code> code = std::make_shared<Code>();
 
 %%
 
-program:        VAR declarations TBEGIN commands END{ printf("1"); } 
-              | TBEGIN commands END { printf("2"); }
-              | VAR { printf("3"); }
+program:        VAR declarations TBEGIN commands END                        { code->end_code(); } 
+              | TBEGIN commands END                                         { code->end_code(); }
 ;
 
 declarations:   declarations',' pidentifier                                 
@@ -76,18 +77,18 @@ identifier:     pidentifier
 %%
 
 
-int yyerror(std::string str) {
-    std::cerr << str << " at line " << yylineno << std::endl;
+int yyerror(string str) {
+    cerr << str << " at line " << yylineno << endl;
     exit(1);
 }
 
-void return_code(std::vector<std::string> code, std::string file) {
-    std::ofstream fout(file);
+void return_code(vector<string> code, string file) {
+    ofstream fout(file);
 
-    std::vector<std::string>::iterator it;
+    vector<string>::iterator it;
 
     for (it = code.begin(); it != code.end(); it++) {
-        fout << *it << std::endl;
+        fout << *it << endl;
     }
 
     fout.close();
@@ -95,8 +96,8 @@ void return_code(std::vector<std::string> code, std::string file) {
 
 int main(int argc, char** argv) {
     if (argc < 3) {
-        std::cerr << "Not enough arguments" << std::endl;
-        std::cout << "compiler [input_file] [output_file]" << std::endl;
+        cerr << "Not enough arguments" << endl;
+        cout << "compiler [input_file] [output_file]" << endl;
         return 1;
     }
 
@@ -106,13 +107,13 @@ int main(int argc, char** argv) {
         return 2;
     }
 
-    std::cout << "### Starting compilation ###" << std::endl; 
+    cout << "### Starting compilation ###" << endl; 
 
     try {
         yyparse();
         return_code(code->get_code(), argv[2]);
-        std::cout << "### Compiled successfully ###" << std::endl;
-    } catch (std::string e) {
+        cout << "### Compiled successfully ###" << endl;
+    } catch (string e) {
         yyerror(e);
     }
     //data->print_symbols();
