@@ -2,11 +2,15 @@
 #include <string>
 #include <vector>
 #include <stdlib.h>
+#include <memory>
 
 #include "code.hpp"
+#include "data.hpp"
+#include "symbol.hpp"
 
-Code::Code() {
+Code::Code(shared_ptr<Data> data) {
     this->pc = 0;
+    this->data = data;
 }
 
 vector<string> Code::get_code() {

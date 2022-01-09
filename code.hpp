@@ -1,6 +1,9 @@
 #include <string>
 #include <vector>
+#include <memory>
 #include <stdlib.h>
+
+#include "data.hpp"
 
 
 using namespace std;
@@ -8,9 +11,10 @@ using namespace std;
 class Code {
     private:
         long long pc;   // program counter
-        vector<std::string> code;
+        vector<string> code;
+        shared_ptr<Data> data;
     public:
-        Code();
+        Code(shared_ptr<Data> data);
         
         vector<string> get_code();
         void end_code();
