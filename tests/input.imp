@@ -1,0 +1,6 @@
+VAR
+    i, j
+BEGIN
+    READ i;
+    READ j;
+END

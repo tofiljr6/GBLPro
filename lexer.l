@@ -24,6 +24,7 @@ specialChars    [\;\(\)\:\,]
 
 "READ"          { return READ; }
 "WRITE"         { return WRITE; }
+"ASSIGN"        { return ASSIGN; }
 
 "PLUS"          { return PLUS; }
 "MINUS"         { return MINUS; }

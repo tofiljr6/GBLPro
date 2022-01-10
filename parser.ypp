@@ -19,13 +19,13 @@ extern FILE *yyin;
 extern int yylineno;
 int error = 0;
 
-shared_ptr<Data> data2 = make_shared<Data>();
-shared_ptr<Code> code = make_shared<Code>(data2);
+shared_ptr<Data> datacode = make_shared<Data>();
+shared_ptr<Code> code = make_shared<Code>(datacode);
 
 %}
 
 %union sem_rec {
-    string* pidentifier;
+    std::string* pidentifier;
     long long num;
     symbol* sym;
 }
@@ -47,11 +47,9 @@ program:        VAR declarations TBEGIN commands END                        { co
               | TBEGIN commands END                                         { code->end_code(); }
 ;
 
-declarations:   declarations',' pidentifier                                 
+declarations:   declarations',' pidentifier                                 { datacode->put_symbol(*$3, false); }
               | declarations',' pidentifier'['num':'num']'                  
-              | pidentifier                                                 { printf("zmienne deklaracje\n");
-                                                                              data2->put_symbol(*$1, false);
-                                                                            }
+              | pidentifier                                                 { datacode->put_symbol(*$1, false);}
               | pidentifier'['num':'num']'                                  
 ;              
 
@@ -122,7 +120,7 @@ int main(int argc, char** argv) {
     } catch (string e) {
         yyerror(e);
     }
-    data2->print_symbols();
+    datacode->print_symbols();
 
     return 0;
 }
