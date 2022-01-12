@@ -28,7 +28,7 @@ void Code::assign(symbol* var) {
     symbol* test = this->data->get_symbol(var->name);
     test->is_init = true;
     
-    cout << test->offset << endl;
+    // cout << test->offset << endl;
     this->STORE(test->offset);
 }
 
@@ -39,7 +39,7 @@ void Code::load_value(symbol* sym) {
     this->LOAD(sym->offset);
 }
 
-// VALUES
+// VALUES & PIDs
 
 symbol* Code::get_num(long long num) {
     // get constant if its declared
@@ -48,6 +48,17 @@ symbol* Code::get_num(long long num) {
     } else {  // declare const
         this->data->put_symbol(std::to_string(num), true);
         return this->data->get_symbol(std::to_string(num));
+    }
+}
+
+symbol* Code::pidentifier(string name) {
+    symbol* sym = this->data->get_symbol(name);
+    // CONDITION
+    if (sym != nullptr) {
+        cout << "zwracam: " << sym->name << endl;
+        return sym;
+    } else {
+        throw string(name + " - symbol does not exist");
     }
 }
 

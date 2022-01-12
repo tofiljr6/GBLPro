@@ -78,10 +78,10 @@ expression:     value                                                       { co
 ;              
 
 value:          num                                                         { $$ = code->get_num($1); }
-              | identifier                                                  
+              | identifier                                                  { $$ = $1; }
 ;
 
-identifier:     pidentifier                                                 
+identifier:     pidentifier                                                 { $$ = code->pidentifier(*$1); }
               | pidentifier'['pidentifier']'                                
               | pidentifier'['num']'                                        
 ;

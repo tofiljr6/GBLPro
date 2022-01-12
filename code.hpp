@@ -25,8 +25,10 @@ class Code {
         // EXPRESSIONS
         void load_value(symbol* sym);
         
-        // VALUE
+        // VALUE & PIDs
         symbol* get_num(long long num);
+        symbol* pidentifier(string name);
+        
         
         // MISC
         void generate_constant(long long value, long long offset);
