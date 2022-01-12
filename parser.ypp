@@ -69,7 +69,7 @@ command:        identifier ASSIGN expression';'
               | WRITE value';'                                              
 ;              
 
-expression:     value                                                       
+expression:     value                                                       { code->load_value($1); }
               | value PLUS value                                            
               | value MINUS value                                           
               | value TIMES value                                           
