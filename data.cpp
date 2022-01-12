@@ -61,6 +61,6 @@ void Data::print_symbols() {
     unordered_map<string, shared_ptr<symbol>>::iterator it;
 
     for (it = this->sym_map.begin(); it != this->sym_map.end(); it++) {
-        cout << "Name: " << setw(3) << it->second->name << " Offset: " << setw(2) << it->second->offset << endl;
+        cout << "Name: " << setw(3) << it->second->name << " Offset: " << setw(2) << it->second->offset << setw(3) << it->second->value << setw(2) << it->second->is_init << endl;
     }
 }

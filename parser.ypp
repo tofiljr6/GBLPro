@@ -44,6 +44,9 @@ shared_ptr<Code> code = make_shared<Code>(datacode);
 %left PLUS MINUS
 %left TIMES DIV MOD
 
+%type <sym> value
+%type <sym> expression
+%type <sym> identifier
 
 %%
 
@@ -74,7 +77,7 @@ expression:     value
               | value MOD value                                             
 ;              
 
-value:          num                                                         
+value:          num                                                         { $$ = code->get_num($1); }
               | identifier                                                  
 ;
 

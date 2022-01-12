@@ -19,6 +19,10 @@ class Code {
         vector<string> get_code();
         void end_code();
         
+        
+        // VALUE
+        symbol* get_num(long long num);
+        
         // ASSEMBLER COMMANDS
         void HALT();
   

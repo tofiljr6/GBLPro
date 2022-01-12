@@ -21,6 +21,18 @@ void Code::end_code() {
     this->HALT();
 }
 
+// VALUES
+
+symbol* Code::get_num(long long num) {
+    // get constant if its declared
+    if (this->data->check_context(std::to_string(num))) {
+        return this->data->get_symbol(std::to_string(num));
+    } else {  // declare const
+        this->data->put_symbol(std::to_string(num), true);
+        return this->data->get_symbol(std::to_string(num));
+    }
+}
+
 // ASEMBLER COMMANDS
 
 void Code::HALT() {
