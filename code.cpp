@@ -21,6 +21,17 @@ void Code::end_code() {
     this->HALT();
 }
 
+// COMMANDS
+
+void Code::assign(symbol* var) {
+    // offsetowi zmiennej, przypisujemy aktualną zawartość rejestru a
+    symbol* test = this->data->get_symbol(var->name);
+    test->is_init = true;
+    
+    cout << test->offset << endl;
+    this->STORE(test->offset);
+}
+
 // EXPRESSIONS
 
 void Code::load_value(symbol* sym) {

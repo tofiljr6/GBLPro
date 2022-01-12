@@ -19,6 +19,9 @@ class Code {
         vector<string> get_code();
         void end_code();
         
+        // COMMANDS
+        void assign(symbol* var);
+        
         // EXPRESSIONS
         void load_value(symbol* sym);
         
