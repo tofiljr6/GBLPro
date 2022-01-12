@@ -55,9 +55,9 @@ program:        VAR declarations TBEGIN commands END                        { co
 ;
 
 declarations:   declarations',' pidentifier                                 { datacode->put_symbol(*$3, false); }
-              | declarations',' pidentifier'['num':'num']'                  
-              | pidentifier                                                 { datacode->put_symbol(*$1, false);}
-              | pidentifier'['num':'num']'                                  
+              | declarations',' pidentifier'['num':'num']'                  { datacode->put_array(*$3, $5, $7); }
+              | pidentifier                                                 { datacode->put_symbol(*$1, false); }
+              | pidentifier'['num':'num']'                                  { datacode->put_array(*$1, $3, $5); }
 ;              
 
 commands:       commands command

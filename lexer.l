@@ -14,7 +14,7 @@ int yylex();
 
 pidentifier     [_a-z]+
 digits           -?[0-9]+
-specialChars    [\;\(\)\:\,]
+specialChars    [\;\[\]\(\)\:\,]
 
 
 %%

@@ -43,6 +43,20 @@ void Data::put_symbol(string name, bool is_const) {
     this->sym_map[name] = sym;
 }
 
+void Data::put_array(std::string name, long long array_start, long long array_end) {
+    if (this->check_context(name)) {
+        throw std::string(name + " - already defined");
+    }
+    
+    if (array_end < array_start) {
+        throw std::string(name + " - bad range");
+    }
+    
+    std::shared_ptr<symbol> sym = std::make_shared<symbol>(name, this->memory_offset, array_start, array_end);
+    this->memory_offset += array_end - array_start + 1;
+    this->sym_map[name] = sym;
+}
+
 symbol* Data::get_symbol(string name) {
     if (!this->check_context(name)) {
         throw string(name + " - variable not defined");
@@ -61,6 +75,6 @@ void Data::print_symbols() {
     unordered_map<string, shared_ptr<symbol>>::iterator it;
 
     for (it = this->sym_map.begin(); it != this->sym_map.end(); it++) {
-        cout << "Name: " << setw(3) << it->second->name << " Offset: " << setw(2) << it->second->offset << setw(3) << it->second->value << setw(2) << it->second->is_init << endl;
+        cout << "Name: " << setw(5) << it->second->name << " Offset: " << setw(2) << it->second->offset << setw(3) << it->second->value << setw(2) << it->second->is_init << endl;
     }
 }

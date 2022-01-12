@@ -55,7 +55,6 @@ symbol* Code::pidentifier(string name) {
     symbol* sym = this->data->get_symbol(name);
     // CONDITION
     if (sym != nullptr) {
-        cout << "zwracam: " << sym->name << endl;
         return sym;
     } else {
         throw string(name + " - symbol does not exist");
