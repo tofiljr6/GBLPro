@@ -24,6 +24,10 @@ shared_ptr<Code> code = make_shared<Code>(datacode);
 
 %}
 
+%code requires {
+    #include "symbol.hpp"
+}
+
 %union sem_rec {
     std::string* pidentifier;
     long long num;
