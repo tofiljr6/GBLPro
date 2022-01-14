@@ -28,6 +28,8 @@ void Code::assign(symbol* var) {
     symbol* test = this->data->get_symbol(var->name);
     test->is_init = true;
     
+    cout << test->offset << endl;
+    
     // cout << test->offset << endl;
     this->STORE(test->offset);
 }
@@ -58,6 +60,28 @@ symbol* Code::pidentifier(string name) {
         return sym;
     } else {
         throw string(name + " - symbol does not exist");
+    }
+}
+
+symbol* Code::array_num_pidentifier(string name, long long num) {
+    symbol* sym = this->data->get_symbol(name);
+    if (sym != nullptr) {
+        if (sym->is_array) {
+            if (sym->array_start <= num && sym->array_end >= num) {
+                long long offset = num - sym->array_start + sym->offset;
+                if (!this->data->check_context(name + to_string(num))) {
+                    this->data->put_array_cell(name + to_string(num), offset);
+                }
+                symbol* ret_sym = this->data->get_symbol(name + to_string(num));
+                return ret_sym;
+            } else {
+                throw std::string(name + " - index out of boundry");
+            }
+        } else {
+            throw std::string(name + " - is not an array");
+        }
+    } else {
+        throw std::string(name + " - array does not exist");
     }
 }
 

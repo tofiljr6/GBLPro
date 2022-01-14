@@ -83,7 +83,7 @@ value:          num                                                         { $$
 
 identifier:     pidentifier                                                 { $$ = code->pidentifier(*$1); }
               | pidentifier'['pidentifier']'                                
-              | pidentifier'['num']'                                        
+              | pidentifier'['num']'                                        { $$ = code->array_num_pidentifier(*$1, $3); }
 ;
 %%
 

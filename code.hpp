@@ -28,6 +28,7 @@ class Code {
         // VALUE & PIDs
         symbol* get_num(long long num);
         symbol* pidentifier(string name);
+        symbol* array_num_pidentifier(std::string name , long long num);
         
         
         // MISC
