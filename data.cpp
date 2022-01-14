@@ -13,14 +13,14 @@ Data::Data() {
     this->put_symbol("-1", true);
     
     // Capital letters mean a register
-    this->put_symbol("A", false);
-    this->put_symbol("B", false);
-    this->put_symbol("C", false);
-    this->put_symbol("D", false);
-    this->put_symbol("E", false);
-    this->put_symbol("F", false);
-    this->put_symbol("G", false);
-    this->put_symbol("H", false);
+    // this->put_symbol("A", false);
+    // this->put_symbol("B", false);
+    // this->put_symbol("C", false);
+    // this->put_symbol("D", false);
+    // this->put_symbol("E", false);
+    // this->put_symbol("F", false);
+    // this->put_symbol("G", false);
+    // this->put_symbol("H", false);
 }
 
 bool Data::check_context(string name) {
@@ -80,6 +80,6 @@ void Data::print_symbols() {
     unordered_map<string, shared_ptr<symbol>>::iterator it;
 
     for (it = this->sym_map.begin(); it != this->sym_map.end(); it++) {
-        cout << "Name: " << setw(5) << it->second->name << " Offset: " << setw(2) << it->second->offset << setw(3) << it->second->value << setw(2) << it->second->is_init << endl;
+        cout << "Name: " << setw(5) << it->second->name << " Offset: " << setw(2) << it->second->offset << setw(7) << " value:" << setw(3) << it->second->value << setw(7) << " init: "<< setw(2) << it->second->is_init <<  setw(7) << " const: "<<setw(2) << it->second->is_const<< endl;
     }
 }

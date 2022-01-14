@@ -27,11 +27,25 @@ void Code::assign(symbol* var) {
     // offsetowi zmiennej, przypisujemy aktualną zawartość rejestru a
     symbol* test = this->data->get_symbol(var->name);
     test->is_init = true;
-    
-    cout << test->offset << endl;
-    
-    // cout << test->offset << endl;
     this->STORE(test->offset);
+    
+    // this->STORE(var->offset);
+    // var->is_init = true;
+}
+
+void Code::write(symbol* sym) {
+    this->check_init(sym);
+    this->LOAD(sym->offset);
+    if(sym->is_const) {
+        // w rejestrze a znajduje się offset zmiennej,
+        // teraz aby pobrać jej wartość załadujemy ją, poprzez offset
+        // i podstaiwmy pod rejestr a
+        this->code.push_back("LOAD a");
+    }
+    if(!sym->is_init) {
+        throw string(sym->name + " - symbol does not be printed");
+    }
+    this->PUT();
 }
 
 // EXPRESSIONS
@@ -176,6 +190,8 @@ void Code::check_init(symbol* sym) {
     if (!sym->is_init) {
         if (sym->is_const) {
             this->init_const(sym);
+        } else {
+            cout << sym->name << " - symbol may be uninitialized" << std::endl;
         }
     }
 }

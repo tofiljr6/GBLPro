@@ -1,6 +1,14 @@
 VAR
-    i, j
+    i, j, arr[0:5]
 BEGIN
-    READ i;
-    READ j;
+    i ASSIGN 5;
+    j ASSIGN i;
+    i ASSIGN 10;
+    WRITE i;
+    WRITE j;
+    arr[0] ASSIGN i;
+    i ASSIGN 20;
+    WRITE arr[0];
+    WRITE i;
+    WRITE arr;
 END

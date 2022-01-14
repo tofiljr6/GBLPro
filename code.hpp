@@ -21,6 +21,7 @@ class Code {
         
         // COMMANDS
         void assign(symbol* var);
+        void write(symbol* sym);
         
         // EXPRESSIONS
         void load_value(symbol* sym);
