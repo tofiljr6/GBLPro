@@ -30,6 +30,7 @@ class Code {
         symbol* get_num(long long num);
         symbol* pidentifier(string name);
         symbol* array_num_pidentifier(std::string name , long long num);
+        symbol* array_pid_pidentifier(std::string name, std::string pid_name);
         
         
         // MISC
@@ -47,6 +48,8 @@ class Code {
         void HALT();
         void INC(string r);
         void DEC(string r);
+        void ADD(string r);
+        void SUB(string r);
         void RESET(string r);
         void SHIFT(string r);
         void STORE(long long offset);

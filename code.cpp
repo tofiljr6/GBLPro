@@ -24,35 +24,96 @@ void Code::end_code() {
 // COMMANDS
 
 void Code::assign(symbol* var) {
+    // w rejestrze 'a' znajduje się teraz zmienna np. 2, 57
+    
     // offsetowi zmiennej, przypisujemy aktualną zawartość rejestru a
     symbol* test = this->data->get_symbol(var->name);
     test->is_init = true;
-    this->STORE(test->offset);
-    
-    // this->STORE(var->offset);
-    // var->is_init = true;
+        
+    if (var->is_addr_cell) {
+        this->code.push_back("STORE f");
+        cout << "\t\t" << test->name << ":" << test->offset << endl;
+    } else {
+        this->STORE(test->offset);
+    }
 }
 
 void Code::write(symbol* sym) {
-    this->check_init(sym);
-    this->LOAD(sym->offset);
-    if(sym->is_const) {
-        // w rejestrze a znajduje się offset zmiennej,
-        // teraz aby pobrać jej wartość załadujemy ją, poprzez offset
-        // i podstaiwmy pod rejestr a
+    // if(!sym->is_const) {
+    //     this->check_init(sym);
+    //     this->LOAD(sym->offset);
+    //     cout << sym->offset;
+    //     this->PUT();
+    //     // w rejestrze a znajduje się offset zmiennej,
+    //     // teraz aby pobrać jej wartość załadujemy ją, poprzez offset
+    //     // i podstaiwmy pod rejestr a
+    //     this->code.push_back("LOAD a");
+    //     cout << "NARA" << endl;
+    // }
+    // // if(!sym->is_init) {
+    // //     throw string(sym->name + " - symbol does not be printed");
+    // // }
+    // else if (sym->is_array_cell) {
+    //     cout << "SIEMA" << endl;
+    //     this->code.push_back("LOAD a");
+    //     this->PUT();
+    // }
+    if (sym->is_const) {
+        this->check_init(sym);
+        this->LOAD(sym->offset);
+        this->PUT();
+    } else if (sym->is_init && !sym->is_array_cell) {
+        // cout << "ZMIENNA" << endl;
+        this->check_init(sym);
+        this->LOAD(sym->offset);
+        this->PUT();
+    } else if (sym->is_array_cell) {
+        this->check_init(sym);
+        // cout << "SIEMA" << endl;
+        // cout << sym->name << ":" << sym->offset << endl;
+        // cout << "arr[1]" << endl;
+        cout << "Będę drukwoać " << sym->offset << " " << sym->name << endl;
+        
+        this->LOAD(sym->offset);
+        // this->PUT();
+        // this->code.push_back("LOAD a"); // TODO:
+        this->PUT();
+    } else if (sym->is_addr_cell) {
+        // cout << "Inny write jest" << endl;
+        cout << sym->name << ":" <<  sym->offset << endl;
+        
+        
+        this->generate_value_in_register(sym->offset, "b");
+        // this->SWAP("b");
+        // this->PUT();
         this->code.push_back("LOAD a");
+        // this->PUT();
+        this->code.push_back("LOAD a");
+        
+        // cout << (sym->name)[0] << endl;
+        // string t = "T";
+        // string x = (sym->name)[0];
+        // if ((x).compare(t) == 0) {
+        //     // if sym->name[0:3] == "TMP" then
+        //     this->code.push_back("LOAD a"); //TODO: 
+        // }
+        
+        // this->code.push_back("LOAD a"); //TODO: 
+        this->PUT();
     }
-    if(!sym->is_init) {
-        throw string(sym->name + " - symbol does not be printed");
-    }
-    this->PUT();
+    
 }
 
 // EXPRESSIONS
 
 void Code::load_value(symbol* sym) {
     this->check_init(sym);
-    this->LOAD(sym->offset);
+    if (!sym->is_addr_cell) {
+        this->LOAD(sym->offset);
+    } else {
+        this->LOAD(sym->offset);
+        this->code.push_back("LOAD a");
+    }
 }
 
 // VALUES & PIDs
@@ -71,7 +132,11 @@ symbol* Code::pidentifier(string name) {
     symbol* sym = this->data->get_symbol(name);
     // CONDITION
     if (sym != nullptr) {
-        return sym;
+        if (!sym->is_array) {
+            return sym;
+        } else {
+            throw std::string(name + " - wrong usage, " + name + " is an array");
+        }
     } else {
         throw string(name + " - symbol does not exist");
     }
@@ -96,6 +161,62 @@ symbol* Code::array_num_pidentifier(string name, long long num) {
         }
     } else {
         throw std::string(name + " - array does not exist");
+    }
+}
+
+symbol* Code::array_pid_pidentifier(std::string name, std::string pid_name) {
+    symbol* array = this->data->get_symbol(name);
+    symbol* var = this->data->get_symbol(pid_name);
+
+    if (array != nullptr && var != nullptr) {
+        if (array->is_array) {
+            // init constants
+            symbol* array_start = this->get_num(array->array_start);
+            this->check_init(array_start);
+            symbol* array_offset = this->get_num(array->offset);
+            this->check_init(array_offset);
+            
+            this->generate_value_in_register(var->offset, "a");
+            this->code.push_back("LOAD a");
+            this->SWAP("d");
+            
+            this->generate_value_in_register(array_start->offset, "b");
+            this->code.push_back("LOAD b");
+            this->SWAP("b");
+
+            this->generate_value_in_register(array_offset->offset, "c");
+            this->code.push_back("LOAD c");
+            this->SWAP("c");
+            
+            
+            this->SWAP("d");
+            this->SUB("b");
+            this->ADD("c");
+            
+            this->SWAP("f"); // 7
+            
+            
+            // save address
+            this->data->put_addr_cell("TMP" + std::to_string(this->data->memory_offset), this->data->memory_offset);
+            symbol* cell_address = this->data->get_symbol("TMP" + std::to_string(this->data->memory_offset));
+            this->generate_value_in_register(cell_address->offset, "b");
+            
+            this->SWAP("f"); 
+            
+            this->code.push_back("STORE b"); // 14 -> 7
+            this->data->memory_offset++;
+            
+            this->SWAP("f"); // 7
+            return cell_address;
+        } else {
+            throw std::string(array->name + " - is not an array");
+        }
+    } else {
+        if (array == nullptr) {
+            throw std::string(name + " - array does not exsit");
+        } else {
+            throw std::string(pid_name + " - is not declared");
+        }
     }
 }
 
@@ -187,6 +308,9 @@ void Code::init_const(symbol* sym) {
 
 void Code::check_init(symbol* sym) {
     // CONDITION:
+    if (sym->is_array_cell || sym->is_addr_cell) {
+        return;
+    }
     if (!sym->is_init) {
         if (sym->is_const) {
             this->init_const(sym);
@@ -213,6 +337,16 @@ void Code::DEC(string r) {
     this->pc++;
 }
 
+void Code::ADD(string r) {
+    this->code.push_back("ADD " + r);
+    this->pc++;
+}
+
+void Code::SUB(string r) {
+    this->code.push_back("SUB " + r);
+    this->pc++;
+}
+
 void Code::RESET(string r) {
     this->code.push_back("RESET " + r);
     this->pc++;
@@ -224,6 +358,8 @@ void Code::SHIFT(string r) {
 }
 
 void Code::STORE(long long offset) {
+    // Używane rejestry: g, a, h
+    
     // zapisuje wartość, która jest w rejestrze a, w pamięci o offset'cie k†óry podajemy
     // przetrzymujemy offset w rejestrze g
     this->generate_value_in_register(offset, "g");

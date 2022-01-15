@@ -62,6 +62,11 @@ void Data::put_array_cell(std::string name, long long offset) {
     this->sym_map[name] = sym;
 }
 
+void Data::put_addr_cell(std::string name, long long offset) {
+    std::shared_ptr<symbol> sym = std::make_shared<symbol>(name, offset, false, true);
+    this->sym_map[name] = sym;
+}
+
 symbol* Data::get_symbol(string name) {
     if (!this->check_context(name)) {
         throw string(name + " - variable not defined");

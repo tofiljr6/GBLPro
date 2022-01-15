@@ -1,14 +1,28 @@
 VAR
     i, j, arr[0:5]
 BEGIN
-    i ASSIGN 5;
-    j ASSIGN i;
-    i ASSIGN 10;
-    WRITE i;
-    WRITE j;
-    arr[0] ASSIGN i;
-    i ASSIGN 20;
-    WRITE arr[0];
-    WRITE i;
-    WRITE arr;
+    i ASSIGN 2;
+    
+    arr[i] ASSIGN 28;
+    WRITE arr[i];
+    
+    arr[1] ASSIGN 65;
+    WRITE arr[1];
+    
+    j ASSIGN 3;
+    arr[j] ASSIGN 14;
+    WRITE arr[3];
+    
+    j ASSIGN 4;
+    arr[4] ASSIGN 33;
+    WRITE arr[j];
+    
+    arr[4] ASSIGN arr[2];
+    WRITE arr[4];
+    WRITE arr[j];
+    
+    arr[4] ASSIGN arr[i];
+    WRITE arr[4];
+    WRITE arr[j];
+    
 END
