@@ -53,7 +53,9 @@ class Code {
         void RESET(string r);
         void SHIFT(string r);
         void STORE(long long offset);
+        void STORE(string r);
         void LOAD(long long offset);
+        void LOAD(string r);
         void SWAP(string r);
         void PUT();
   

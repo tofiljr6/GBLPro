@@ -24,95 +24,45 @@ void Code::end_code() {
 // COMMANDS
 
 void Code::assign(symbol* var) {
-    // w rejestrze 'a' znajduje się teraz zmienna np. 2, 57
-    
     // offsetowi zmiennej, przypisujemy aktualną zawartość rejestru a
     symbol* test = this->data->get_symbol(var->name);
     test->is_init = true;
         
     if (var->is_addr_cell) {
-        this->code.push_back("STORE f");
-        cout << "\t\t" << test->name << ":" << test->offset << endl;
+        this->STORE("f");
     } else {
         this->STORE(test->offset);
     }
 }
 
 void Code::write(symbol* sym) {
-    // if(!sym->is_const) {
-    //     this->check_init(sym);
-    //     this->LOAD(sym->offset);
-    //     cout << sym->offset;
-    //     this->PUT();
-    //     // w rejestrze a znajduje się offset zmiennej,
-    //     // teraz aby pobrać jej wartość załadujemy ją, poprzez offset
-    //     // i podstaiwmy pod rejestr a
-    //     this->code.push_back("LOAD a");
-    //     cout << "NARA" << endl;
-    // }
-    // // if(!sym->is_init) {
-    // //     throw string(sym->name + " - symbol does not be printed");
-    // // }
-    // else if (sym->is_array_cell) {
-    //     cout << "SIEMA" << endl;
-    //     this->code.push_back("LOAD a");
-    //     this->PUT();
-    // }
-    if (sym->is_const) {
+    // czytanie różni się od tego jak symbol chcemy wydrukować, musimy załadować
+    // offset offsetu aby dostać się do wartości
+    if (sym->is_addr_cell) {
         this->check_init(sym);
-        this->LOAD(sym->offset);
-        this->PUT();
-    } else if (sym->is_init && !sym->is_array_cell) {
-        // cout << "ZMIENNA" << endl;
-        this->check_init(sym);
-        this->LOAD(sym->offset);
-        this->PUT();
-    } else if (sym->is_array_cell) {
-        this->check_init(sym);
-        // cout << "SIEMA" << endl;
-        // cout << sym->name << ":" << sym->offset << endl;
-        // cout << "arr[1]" << endl;
-        cout << "Będę drukwoać " << sym->offset << " " << sym->name << endl;
-        
-        this->LOAD(sym->offset);
-        // this->PUT();
-        // this->code.push_back("LOAD a"); // TODO:
-        this->PUT();
-    } else if (sym->is_addr_cell) {
-        // cout << "Inny write jest" << endl;
-        cout << sym->name << ":" <<  sym->offset << endl;
-        
-        
         this->generate_value_in_register(sym->offset, "b");
-        // this->SWAP("b");
-        // this->PUT();
-        this->code.push_back("LOAD a");
-        // this->PUT();
-        this->code.push_back("LOAD a");
-        
-        // cout << (sym->name)[0] << endl;
-        // string t = "T";
-        // string x = (sym->name)[0];
-        // if ((x).compare(t) == 0) {
-        //     // if sym->name[0:3] == "TMP" then
-        //     this->code.push_back("LOAD a"); //TODO: 
-        // }
-        
-        // this->code.push_back("LOAD a"); //TODO: 
+        this->LOAD("a");
+        this->LOAD("a");
+        this->PUT();
+    } else {
+        this->check_init(sym);
+        this->LOAD(sym->offset);
         this->PUT();
     }
-    
 }
 
 // EXPRESSIONS
 
 void Code::load_value(symbol* sym) {
+    // metoda załadowuje wartość w zależności o rodzaju symbolu
+    // różnica jest wtedy gdy chcemy przypisać zmiennej arr[i] zmienna arr[j]
+    // wtedy musimy załadować wskazanie offset'u
     this->check_init(sym);
     if (!sym->is_addr_cell) {
         this->LOAD(sym->offset);
     } else {
         this->LOAD(sym->offset);
-        this->code.push_back("LOAD a");
+        this->LOAD("a");
     }
 }
 
@@ -177,24 +127,25 @@ symbol* Code::array_pid_pidentifier(std::string name, std::string pid_name) {
             this->check_init(array_offset);
             
             this->generate_value_in_register(var->offset, "a");
-            this->code.push_back("LOAD a");
+            this->LOAD("a");
             this->SWAP("d");
             
             this->generate_value_in_register(array_start->offset, "b");
-            this->code.push_back("LOAD b");
+            this->LOAD("b");
             this->SWAP("b");
 
             this->generate_value_in_register(array_offset->offset, "c");
-            this->code.push_back("LOAD c");
+            this->LOAD("c");
             this->SWAP("c");
-            
             
             this->SWAP("d");
             this->SUB("b");
             this->ADD("c");
             
-            this->SWAP("f"); // 7
-            
+            // naszą wartość, offset kommóki do którego chcemy zapisać, musimy napoczątku przechować w innym
+            // rejestrze, ponieważ zaraz będzimey robić generate_value_in_register, który używa rejestru 'a',
+            // i byśmy stracili
+            this->SWAP("f");
             
             // save address
             this->data->put_addr_cell("TMP" + std::to_string(this->data->memory_offset), this->data->memory_offset);
@@ -203,10 +154,10 @@ symbol* Code::array_pid_pidentifier(std::string name, std::string pid_name) {
             
             this->SWAP("f"); 
             
-            this->code.push_back("STORE b"); // 14 -> 7
+            this->STORE("b");
             this->data->memory_offset++;
             
-            this->SWAP("f"); // 7
+            this->SWAP("f");
             return cell_address;
         } else {
             throw std::string(array->name + " - is not an array");
@@ -239,7 +190,7 @@ void Code::generate_constant(long long value, long long offset) {
     this->generate_value_in_register(value, "b");
     this->generate_value_in_register(offset, "d");
     this->SWAP("b");
-    this->code.push_back("STORE d");
+    this->STORE("d");
     
 }
 
@@ -367,10 +318,22 @@ void Code::STORE(long long offset) {
     this->pc++;
 }
 
+void Code::STORE(string r) {
+    // zapisz wartość z pamięci w rejestrze 'r' do rejestru a
+    this->code.push_back("STORE " + r);
+    this->pc++;
+}
+
 void Code::LOAD(long long offset) {
-    // wczytaj wartośc z pamięci o offset'cie to rejestru a
+    // wczytaj wartośc z pamięci o offset'cie do rejestru a
     this->generate_value_in_register(offset, "g");
     this->code.push_back("LOAD g");
+    this->pc++;
+}
+
+void Code::LOAD(string r) {
+    // wczytaj wartość z pamięci w rejestrze 'r' do rejestru a
+    this->code.push_back("LOAD " + r);
     this->pc++;
 }
 
