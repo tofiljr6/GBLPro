@@ -1,12 +1,12 @@
 VAR
-    i, j, arr[0:5]
+    i, j, k, l, m, arr[0:5]
 BEGIN
     i ASSIGN 2;
     
-    arr[i] ASSIGN 28;
+    arr[i] ASSIGN 28 PLUS 2;
     WRITE arr[i];
     
-    arr[1] ASSIGN 65;
+    arr[1] ASSIGN 65 PLUS arr[2];
     WRITE arr[1];
     
     j ASSIGN 3;
@@ -24,5 +24,6 @@ BEGIN
     arr[4] ASSIGN arr[i];
     WRITE arr[4];
     WRITE arr[j];
+    
     
 END

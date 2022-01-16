@@ -38,6 +38,7 @@ shared_ptr<Code> code = make_shared<Code>(datacode);
 %token VAR TBEGIN END
 %token READ WRITE
 %token ASSIGN
+%token ERROR
 %token <pidentifier> pidentifier
 %token <num> num
 
@@ -84,7 +85,9 @@ command:        identifier ASSIGN expression';'                             {
 expression:     value                                                       {
                                                                             code->load_value($1);
                                                                             }
-              | value PLUS value                                            
+              | value PLUS value                                            {
+                                                                            code->plus($1, $3);
+                                                                            }
               | value MINUS value                                           
               | value TIMES value                                           
               | value DIV value                                             

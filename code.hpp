@@ -25,6 +25,7 @@ class Code {
         
         // EXPRESSIONS
         void load_value(symbol* sym);
+        void plus(symbol* a, symbol* b);
         
         // VALUE & PIDs
         symbol* get_num(long long num);

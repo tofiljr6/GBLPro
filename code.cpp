@@ -27,10 +27,22 @@ void Code::assign(symbol* var) {
     // offsetowi zmiennej, przypisujemy aktualną zawartość rejestru a
     symbol* test = this->data->get_symbol(var->name);
     test->is_init = true;
-        
+    
+    // this->PUT();
+    // cout << test->offset << ":" << var->offset <<  ":" << var->name << endl;;
+    
     if (var->is_addr_cell) {
         this->STORE("f");
-    } else {
+    } 
+    else if(var->is_array_cell) {
+        // cout << "assign : is array cell " << test->offset << ":" << var->offset <<  ":" << var->name << endl;;
+        this->SWAP("f");
+        this->generate_value_in_register(test->offset, "b");
+        this->SWAP("f");
+        this->STORE("b");
+        // this->STORE(test->offset); // NOTE: na to kurwwa trzeba uważać jak ogania ze względu na stracenie wartości a
+    }
+     else {
         this->STORE(test->offset);
     }
 }
@@ -38,11 +50,34 @@ void Code::assign(symbol* var) {
 void Code::write(symbol* sym) {
     // czytanie różni się od tego jak symbol chcemy wydrukować, musimy załadować
     // offset offsetu aby dostać się do wartości
+    
+    
     if (sym->is_addr_cell) {
         this->check_init(sym);
         this->generate_value_in_register(sym->offset, "b");
         this->LOAD("a");
         this->LOAD("a");
+        this->PUT();
+    // else if(sym->is_array_cell) { 
+    //     cout << "TAK" << endl;
+    //     this->check_init(sym);
+    //     this->LOAD(sym->offset);
+    //     this->LOAD("a");
+    //     this->PUT();
+    // }
+    } else if(sym->is_array_cell) {
+        // cout << "WRITE: arr[4]" << endl;
+        // cout << "JEST nawet 2" << sym->name <<  endl;
+        // this->check_init(sym);
+        // this->LOAD(sym->offset);
+        // // this->PUT();
+        // this->LOAD("a");
+        // this->PUT();
+        // cout << "write: offset"  << sym->offset << endl;
+        this->check_init(sym);
+        this->generate_value_in_register(sym->offset, "a");
+        this->LOAD("a");
+        // this->LOAD(sym->offset);
         this->PUT();
     } else {
         this->check_init(sym);
@@ -58,11 +93,39 @@ void Code::load_value(symbol* sym) {
     // różnica jest wtedy gdy chcemy przypisać zmiennej arr[i] zmienna arr[j]
     // wtedy musimy załadować wskazanie offset'u
     this->check_init(sym);
-    if (!sym->is_addr_cell) {
-        this->LOAD(sym->offset);
-    } else {
+    if (sym->is_addr_cell) {
         this->LOAD(sym->offset);
         this->LOAD("a");
+    } 
+    else if(sym->is_array_cell) {
+        // cout << sym->offset << "::" << endl;        
+        this->LOAD(sym->offset);
+    }
+    else { // sym->is_constant
+        this->LOAD(sym->offset);
+    }
+}
+
+void Code::plus(symbol* a, symbol* b) {
+    this->check_init(a);
+    this->check_init(b);
+    
+    if (a->is_addr_cell && b->is_addr_cell) {
+        this->LOAD(a->offset);
+        this->STORE(this->data->memory_offset);
+        this->LOAD(b->offset);
+        this->generate_value_in_register(this->data->memory_offset, "b");
+        this->ADD("b");
+    } else if (b->is_addr_cell && !a->is_addr_cell) {
+        this->LOAD(b->offset);
+        this->generate_value_in_register(a->offset, "b");
+        this->ADD("b");
+    } else {
+        cout << a->value << "+" << b->value << endl;
+        this->LOAD(a->offset);
+        this->SWAP("b");
+        this->LOAD(b->offset);
+        this->ADD("b");
     }
 }
 

@@ -16,6 +16,7 @@ pidentifier     [_a-z]+
 digits           -?[0-9]+
 specialChars    [\;\[\]\(\)\:\,]
 
+%x comment
 
 %%
 "VAR"       { return VAR; }
@@ -36,5 +37,10 @@ specialChars    [\;\[\]\(\)\:\,]
 {digits}        { yylval.num = std::stoll(yytext); return num; }
 {specialChars}  { return yytext[0]; }
 
+"("             BEGIN(comment);
+<comment>")"    BEGIN(INITIAL);
+<comment>.|\n   ;
+
 [ \t\n\r]+   ;
+.               { return ERROR; }
 %%
