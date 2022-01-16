@@ -28,19 +28,15 @@ void Code::assign(symbol* var) {
     symbol* test = this->data->get_symbol(var->name);
     test->is_init = true;
     
-    // this->PUT();
-    // cout << test->offset << ":" << var->offset <<  ":" << var->name << endl;;
-    
     if (var->is_addr_cell) {
         this->STORE("f");
     } 
     else if(var->is_array_cell) {
-        // cout << "assign : is array cell " << test->offset << ":" << var->offset <<  ":" << var->name << endl;;
         this->SWAP("f");
         this->generate_value_in_register(test->offset, "b");
         this->SWAP("f");
         this->STORE("b");
-        // this->STORE(test->offset); // NOTE: na to kurwwa trzeba uważać jak ogania ze względu na stracenie wartości a
+        // this->STORE(test->offset); // #5
     }
      else {
         this->STORE(test->offset);
@@ -51,33 +47,16 @@ void Code::write(symbol* sym) {
     // czytanie różni się od tego jak symbol chcemy wydrukować, musimy załadować
     // offset offsetu aby dostać się do wartości
     
-    
     if (sym->is_addr_cell) {
         this->check_init(sym);
         this->generate_value_in_register(sym->offset, "b");
         this->LOAD("a");
         this->LOAD("a");
         this->PUT();
-    // else if(sym->is_array_cell) { 
-    //     cout << "TAK" << endl;
-    //     this->check_init(sym);
-    //     this->LOAD(sym->offset);
-    //     this->LOAD("a");
-    //     this->PUT();
-    // }
     } else if(sym->is_array_cell) {
-        // cout << "WRITE: arr[4]" << endl;
-        // cout << "JEST nawet 2" << sym->name <<  endl;
-        // this->check_init(sym);
-        // this->LOAD(sym->offset);
-        // // this->PUT();
-        // this->LOAD("a");
-        // this->PUT();
-        // cout << "write: offset"  << sym->offset << endl;
         this->check_init(sym);
         this->generate_value_in_register(sym->offset, "a");
         this->LOAD("a");
-        // this->LOAD(sym->offset);
         this->PUT();
     } else {
         this->check_init(sym);
@@ -98,7 +77,6 @@ void Code::load_value(symbol* sym) {
         this->LOAD("a");
     } 
     else if(sym->is_array_cell) {
-        // cout << sym->offset << "::" << endl;        
         this->LOAD(sym->offset);
     }
     else { // sym->is_constant
@@ -372,7 +350,7 @@ void Code::SHIFT(string r) {
 }
 
 void Code::STORE(long long offset) {
-    // Używane rejestry: g, a, h
+    // Używane rejestry: g, a, h 
     
     // zapisuje wartość, która jest w rejestrze a, w pamięci o offset'cie k†óry podajemy
     // przetrzymujemy offset w rejestrze g
