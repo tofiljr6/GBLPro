@@ -28,6 +28,8 @@ void Code::assign(symbol* var) {
     symbol* test = this->data->get_symbol(var->name);
     test->is_init = true;
     
+    // this->PUT();
+    
     if (var->is_addr_cell) {
         this->STORE("f");
     } 
@@ -94,10 +96,18 @@ void Code::plus(symbol* a, symbol* b) {
         this->LOAD(b->offset);
         this->generate_value_in_register(this->data->memory_offset, "b");
         this->ADD("b");
-    } else if (b->is_addr_cell && !a->is_addr_cell) {
+    } else if (!a->is_addr_cell && b->is_addr_cell) {
         this->LOAD(b->offset);
-        this->generate_value_in_register(a->offset, "b");
-        this->ADD("b");
+        this->LOAD("a");
+        this->SWAP("f");
+        this->generate_value_in_register(a->value, "a");
+        this->ADD("f");
+    } else if (a->is_addr_cell && !b->is_addr_cell) {
+        this->LOAD(a->offset);
+        this->LOAD("a");
+        this->SWAP("f");
+        this->generate_value_in_register(b->value, "a");
+        this->ADD("f");
     } else {
         cout << a->value << "+" << b->value << endl;
         this->LOAD(a->offset);
