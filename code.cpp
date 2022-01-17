@@ -91,11 +91,16 @@ void Code::plus(symbol* a, symbol* b) {
     this->check_init(b);
     
     if (a->is_addr_cell && b->is_addr_cell) {
+        // ładujemy z pamięci offset zmiennej a, następnie load jej offset i mmay jej wartość
+        // powtarzamy czynność dla symbolu b  oraz wyniki
+        // zachowujemy w rejestrze 'a' - ze względy na to że potem nastąpi ASSIGN i 
+        // on wymaga tego, żeby wartość którą chcemy zapisać była w rejestrze 'a'
         this->LOAD(a->offset);
-        this->STORE(this->data->memory_offset);
+        this->LOAD("a");
+        this->SWAP("f");
         this->LOAD(b->offset);
-        this->generate_value_in_register(this->data->memory_offset, "b");
-        this->ADD("b");
+        this->LOAD("a");
+        this->ADD("f");
     } else if (!a->is_addr_cell && b->is_addr_cell) {
         this->LOAD(b->offset);
         this->LOAD("a");
