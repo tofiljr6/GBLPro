@@ -9,17 +9,19 @@
 
 #include "parser.tab.hpp"
 
+using namespace std;
+
 int yylex();
 %}
 
 pidentifier     [_a-z]+
 digits           -?[0-9]+
-specialChars    [\;\[\]\(\)\:\,]
+specialChars    [\;\[\]\:\,]
 
 %x comment
 
 %%
-"VAR"       { return VAR; }
+"VAR"           { return VAR; }
 "BEGIN"         { return TBEGIN; }
 "END"           { return END; }
 
