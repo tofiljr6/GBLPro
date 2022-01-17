@@ -1,5 +1,5 @@
 VAR
-    i, j, k, l, m, n, o, arr[0:5]
+    i, j, k, l, m, n, o, p, r, arr[0:5]
 BEGIN
     i ASSIGN 2;
     arr[i] ASSIGN 15;
@@ -8,9 +8,13 @@ BEGIN
     m ASSIGN arr[i] PLUS arr[i];
     n ASSIGN m PLUS m;
     o ASSIGN 2 PLUS 99;
-    WRITE l; ( =17 )
-    WRITE k; ( =17 )
-    WRITE m; ( =30 )
-    WRITE n; ( =60 )
+    p ASSIGN arr[i] PLUS o; (15 PLUS 101)
+    r ASSIGN o PLUS arr[i]; (101 PLUS 15)
+    WRITE l; ( = 17 )
+    WRITE k; ( = 17 )
+    WRITE m; ( = 30 )
+    WRITE n; ( = 60 )
     WRITE o; ( =101 )
+    WRITE p; ( =116 )
+    WRITE r; ( =116 )
 END

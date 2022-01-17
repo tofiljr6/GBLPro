@@ -112,13 +112,13 @@ void Code::plus(symbol* a, symbol* b) {
         this->LOAD(b->offset);
         this->LOAD("a");
         this->SWAP("f");
-        this->generate_value_in_register(a->value, "a");
+        this->LOAD(a->offset);
         this->ADD("f");
     } else if (a->is_addr_cell && !b->is_addr_cell) {
         this->LOAD(a->offset);
         this->LOAD("a");
         this->SWAP("f");
-        this->generate_value_in_register(b->value, "a");
+        this->LOAD(b->offset);
         this->ADD("f");
     } else {
         cout << a->value << "+" << b->value << endl;
