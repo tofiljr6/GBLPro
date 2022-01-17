@@ -1,0 +1,43 @@
+VAR
+    a, i, j, k, l, m, n, o, p, r, s, arr[0:7]
+BEGIN  
+    i ASSIGN 0;
+    a ASSIGN 1;
+    arr[i] ASSIGN 15;
+    arr[a] ASSIGN 20;
+    arr[2] ASSIGN 55;
+    arr[3] ASSIGN 35;
+    l ASSIGN 2 MINUS arr[i]; 
+    k ASSIGN arr[i] MINUS 2;
+    m ASSIGN arr[i] MINUS arr[a];
+    n ASSIGN m MINUS k; (-5 MINUS 13)
+    o ASSIGN 2 MINUS 99;
+    p ASSIGN k MINUS 44;
+    r ASSIGN 80 MINUS k;
+    s ASSIGN r MINUS p; (67 MINUS -31)
+    arr[4] ASSIGN arr[2] MINUS arr[3]; (55 MINUS 35)
+    arr[5] ASSIGN arr[2] MINUS 4; (55 MINUS 4)
+    arr[6] ASSIGN 4 MINUS arr[2];
+    arr[7] ASSIGN arr[2] MINUS k; (55 MINUS 13)
+    
+    WRITE l;      ( = -13 )
+    WRITE k;      ( =  13 )
+    WRITE m;      ( =  -5 ) 
+    WRITE n;      ( = -18 )
+    WRITE o;      ( = -97 )
+    WRITE p;      ( = -31 )
+    WRITE r;      ( =  67 )
+    WRITE s;      ( =  98 )
+    WRITE arr[4]; ( =  20 ) 
+    WRITE arr[5]; ( =  51 ) 
+    WRITE arr[6]; ( = -51 ) 
+    WRITE arr[7]; ( =  42 ) 
+    
+    arr[6] ASSIGN arr[6] MINUS 4;
+    k ASSIGN k MINUS 6;
+    
+    WRITE arr[6]; ( = -55 ) 
+    WRITE k;      ( =   7 )
+    
+    
+END

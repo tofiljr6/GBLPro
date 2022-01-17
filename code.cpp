@@ -40,7 +40,15 @@ void Code::assign(symbol* var) {
         this->STORE("b");
         // this->STORE(test->offset); // #5
     }
-     else {
+    else if (var->is_init && !var->is_const) {
+        // cout << var->name << ".is_const" << endl;
+        this->SWAP("f");
+        this->generate_value_in_register(test->offset, "b");
+        this->SWAP("f");
+        this->STORE("b");
+        
+    }
+    else {
         this->STORE(test->offset);
     }
 }
@@ -48,7 +56,6 @@ void Code::assign(symbol* var) {
 void Code::write(symbol* sym) {
     // czytanie różni się od tego jak symbol chcemy wydrukować, musimy załadować
     // offset offsetu aby dostać się do wartości
-    
     if (sym->is_addr_cell) {
         this->check_init(sym);
         this->generate_value_in_register(sym->offset, "b");
@@ -121,6 +128,78 @@ void Code::plus(symbol* a, symbol* b) {
         this->ADD("b");
     }
 }
+
+void Code::minus(symbol* a, symbol* b) {
+    this->check_init(a);
+    this->check_init(b);
+    
+    if (a->is_addr_cell && b->is_addr_cell) {
+        // ładujemy z pamięci offset zmiennej a, następnie load jej offset i mmay jej wartość
+        // powtarzamy czynność dla symbolu b  oraz wyniki
+        // zachowujemy w rejestrze 'a' - ze względy na to że potem nastąpi ASSIGN i 
+        // on wymaga tego, żeby wartość którą chcemy zapisać była w rejestrze 'a'
+        cout << a->name << ":" << b->name << endl;
+        this->SWAP("g");
+        this->RESET("a");
+        this->DEC("a");
+        // this->PUT();
+        this->SWAP("g");
+
+        this->LOAD(a->offset);
+        // this->PUT();
+        this->LOAD("a");
+        // this->PUT();
+        this->SWAP("b");
+        
+        this->LOAD(b->offset);
+        // this->PUT();
+        this->LOAD("a");
+        // this->PUT();
+        
+        this->SWAP("b");
+        this->SUB("b");
+        // this->PUT();
+        
+        
+        
+        
+        // this->LOAD("a");
+        // this->SWAP("f");
+        // this->LOAD(b->offset);
+        // this->LOAD("a");
+        // this->SUB("f");
+    } else if (!a->is_addr_cell && b->is_addr_cell) {
+        // cout << a->name << ":" << b->name << endl;
+        this->LOAD(a->offset);
+        // this->PUT(); // 33
+        this->SWAP("f");
+        this->RESET("a");
+        this->LOAD(b->offset);
+        // this->PUT(); // 13
+        this->LOAD("a");
+        // this->PUT();
+        this->SWAP("f");
+        this->SUB("f");
+        // this->PUT();
+        // this->HALT();
+    } else if (a->is_addr_cell && !b->is_addr_cell) {
+        // cout << a->name << ":" << b->name << endl;
+        this->LOAD(a->offset);
+        this->LOAD("a");
+        this->SWAP("f");
+        this->generate_value_in_register(b->value, "a");
+        this->SWAP("f");
+        this->SUB("f");
+    } else {
+        // cout << a->value << "-" << b->value << endl;
+        this->LOAD(a->offset);
+        this->SWAP("b");
+        this->LOAD(b->offset);
+        this->SWAP("b");
+        this->SUB("b");
+    }
+}
+
 
 // VALUES & PIDs
 
