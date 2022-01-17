@@ -1,29 +1,14 @@
 VAR
-    i, j, k, l, m, arr[0:5]
+    i, j, k, l, m, n, arr[0:5]
 BEGIN
     i ASSIGN 2;
-    
-    arr[i] ASSIGN 28 PLUS 2;
-    WRITE arr[i];
-    
-    arr[1] ASSIGN 65 PLUS arr[2];
-    WRITE arr[1];
-    
-    j ASSIGN 3;
-    arr[j] ASSIGN 14;
-    WRITE arr[3];
-    
-    j ASSIGN 4;
-    arr[4] ASSIGN 33;
-    WRITE arr[j];
-    
-    arr[4] ASSIGN arr[2];
-    WRITE arr[4];
-    WRITE arr[j];
-    
-    arr[4] ASSIGN arr[i];
-    WRITE arr[4];
-    WRITE arr[j];
-    
-    
+    arr[i] ASSIGN 15;
+    l ASSIGN 2 PLUS arr[i];
+    k ASSIGN arr[i] PLUS 2;
+    m ASSIGN arr[i] PLUS arr[i];
+    n ASSIGN m PLUS m;
+    WRITE l;
+    WRITE k;
+    WRITE m;
+    WRITE n;
 END
