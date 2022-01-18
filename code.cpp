@@ -454,6 +454,34 @@ cond_label* Code::le(symbol* a, symbol* b) {
     return new cond_label(start, addr);
 }
 
+cond_label* Code::ge(symbol* a, symbol* b) {
+    long long start = this->pc;
+    this->minus(a, b);
+    this->JPOS(2);
+    long long addr = this->pc;
+    this->JUMP();
+    
+    return new cond_label(start, addr);
+}
+
+cond_label* Code::leq(symbol* a, symbol* b) {
+    long long start = this->pc;
+    this->minus(a, b);
+    this->JPOS();
+    long long addr = this->pc - 1;
+    
+    return new cond_label(start, addr);
+}
+
+cond_label* Code::geq(symbol* a, symbol* b) {
+    long long start = this->pc;
+    this->minus(a, b);
+    this->JNEG();
+    long long addr = this->pc - 1;
+
+    cond_label* label = new cond_label(start, addr);
+    return label;
+}
 
 void Code::printregister() {
     this->PUT();
@@ -775,6 +803,11 @@ void Code::JPOS(long long j) {
     this->pc++;
 }
 
+void Code::JPOS() {
+    this->code.push_back("JPOS ");
+    this->pc++;
+}
+
 void Code::JZERO(long long j) {
     this->code.push_back("JZERO " + to_string(j));
     this->pc++;
@@ -787,6 +820,11 @@ void Code::JZERO() {
 
 void Code::JNEG(long long j) {
     this->code.push_back("JNEG " + to_string(j));
+    this->pc++;
+}
+
+void Code::JNEG() {
+    this->code.push_back("JNEG ");
     this->pc++;
 }
 

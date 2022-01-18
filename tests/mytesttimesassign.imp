@@ -24,7 +24,6 @@ BEGIN
     a ASSIGN arr[w] TIMES arr[y];
     
     
-    
     WRITE j; ( = 24 )
     WRITE k; ( =121 )
     WRITE l; ( =144 )

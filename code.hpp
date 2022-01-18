@@ -38,6 +38,9 @@ class Code {
         cond_label* eq(symbol* a, symbol* b);
         cond_label* neq(symbol* a, symbol* b);
         cond_label* le(symbol* a, symbol* b);
+        cond_label* ge(symbol* a, symbol* b);
+        cond_label* leq(symbol* a, symbol* b);
+        cond_label* geq(symbol* a, symbol* b);
         
         // VALUE & PIDs
         symbol* get_num(long long num);
@@ -74,6 +77,8 @@ class Code {
         void PUT();
         void JUMP();
         void JZERO();
+        void JPOS();
+        void JNEG();
         void JUMP(long long j);
         void JPOS(long long j);
         void JZERO(long long j);

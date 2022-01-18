@@ -1,0 +1,13 @@
+BEGIN
+    IF 2 LEQ 3 THEN 
+        WRITE 1;
+    ENDIF
+    
+    IF 6 LEQ 5 THEN 
+        WRITE 2;
+    ENDIF
+END
+
+(
+    > 1
+)

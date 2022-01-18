@@ -1,0 +1,9 @@
+BEGIN
+    IF 3 GE 2 THEN 
+        WRITE 1;
+    ENDIF
+    
+    IF 3 GE 5 THEN 
+        WRITE 2;
+    ENDIF
+END
