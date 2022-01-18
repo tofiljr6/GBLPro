@@ -7,6 +7,7 @@
 #include "code.hpp"
 #include "data.hpp"
 #include "symbol.hpp"
+#include "labels.hpp"
 
 Code::Code(shared_ptr<Data> data) {
     this->pc = 0;
@@ -49,6 +50,10 @@ void Code::assign(symbol* var) {
     else {
         this->STORE(test->offset);
     }
+}
+
+void Code::if_block(cond_label* label) {
+    this->code[label->go_to] += std::to_string(this->pc - label->go_to);
 }
 
 void Code::write(symbol* sym) {
@@ -419,6 +424,17 @@ void Code::div(symbol* a, symbol* b) {
     this->SWAP("b"); // znajduje się wynik w r_b, a result musimy przechować w r_a
 }
 
+cond_label* Code::eq(symbol* a, symbol* b) {
+    long long start = this->pc;
+    this->minus(a, b);
+    this->JZERO(2);
+    long long addr = this->pc;
+    this->JUMP();
+    
+    return new cond_label(start, addr);
+}
+
+
 void Code::printregister() {
     this->PUT();
     this->SWAP("b");
@@ -721,6 +737,11 @@ void Code::SWAP(string r) {
 
 void Code::PUT() {
     this->code.push_back("PUT ");
+    this->pc++;
+}
+
+void Code::JUMP() {
+    this->code.push_back("JUMP ");
     this->pc++;
 }
 

@@ -24,16 +24,39 @@ specialChars    [\;\[\]\:\,]
 "VAR"           { return VAR; }
 "BEGIN"         { return TBEGIN; }
 "END"           { return END; }
+"ASSIGN"        { return ASSIGN; }
+
+"FROM"          { return FROM; }
+"DOWNTO"        { return DOWNTO; }
+"TO"            { return TO; }
+"ENDFOR"        { return ENDFOR; }
+
+"WHILE"         { return WHILE; }
+"DO"            { return DO; }
+"ENDDO"         { return ENDDO; }
+"ENDWHILE"      { return ENDWHILE; }
+
 
 "READ"          { return READ; }
 "WRITE"         { return WRITE; }
-"ASSIGN"        { return ASSIGN; }
 
 "PLUS"          { return PLUS; }
 "MINUS"         { return MINUS; }
 "TIMES"         { return TIMES; }
 "DIV"           { return DIV; }
 "MOD"           { return MOD; }
+
+"IF"            { return IF; }
+"THEN"          { return THEN; }
+"ELSE"          { return ELSE; }
+"ENDIF"         { return ENDIF; }
+
+"EQ"            { return EQ; }
+"NEQ"           { return NEQ; }
+"LE"            { return LE; }
+"GE"            { return GE; }
+"LEQ"           { return LEQ; }
+"GEQ"           { return GEQ; }
 
 {pidentifier}   { yylval.pidentifier = new std::string(yytext); return pidentifier;}  
 {digits}        { yylval.num = std::stoll(yytext); return num; }

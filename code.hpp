@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "data.hpp"
+#include "labels.hpp"
 
 
 using namespace std;
@@ -21,6 +22,7 @@ class Code {
         
         // COMMANDS
         void assign(symbol* var);
+        void if_block(cond_label* label);
         void write(symbol* sym);
         void read(symbol* sym);
         
@@ -31,6 +33,9 @@ class Code {
         void times(symbol* a, symbol* b);
         void div(symbol* a, symbol* b);
         void mod(symbol* a, symbol* b);
+        
+        // CONDITIONS
+        cond_label* eq(symbol* a, symbol* b);
         
         // VALUE & PIDs
         symbol* get_num(long long num);
@@ -65,6 +70,7 @@ class Code {
         void LOAD(symbol* sym);
         void SWAP(string r);
         void PUT();
+        void JUMP();
         void JUMP(long long j);
         void JPOS(long long j);
         void JZERO(long long j);

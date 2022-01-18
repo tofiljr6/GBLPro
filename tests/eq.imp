@@ -1,0 +1,12 @@
+VAR 
+    i, j, arr[0:5]
+BEGIN
+    i ASSIGN 5;
+    j ASSIGN 2;
+    arr[0] ASSIGN 1;
+    arr[j] ASSIGN 13;
+    IF 1 EQ arr[j] THEN
+        i ASSIGN 10;
+    ENDIF
+    WRITE i;
+END
