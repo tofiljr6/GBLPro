@@ -29,6 +29,7 @@ class Code {
         void minus(symbol* a, symbol* b);
         void times(symbol* a, symbol* b);
         void div(symbol* a, symbol* b);
+        void mod(symbol* a, symbol* b);
         
         // VALUE & PIDs
         symbol* get_num(long long num);

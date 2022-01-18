@@ -260,6 +260,79 @@ void Code::times(symbol* a, symbol* b) {
     this->SWAP("b"); // znajduje się wynik w r_b, a result musimy przechować w r_a
 }
 
+void Code::mod(symbol* a, symbol *b) {
+    this->check_init(a);
+    this->check_init(b);
+    
+    // przygotowanie zależne od zmiennych
+    // tak aby w rejestrze
+    // r_b znajdowała się wartość symbolu a
+    // r_c znajdowała się wartość symbolu b
+    // w r_a przechowywać będziemy ile już razy przemnożyliśmy
+    if (a->is_addr_cell && b->is_addr_cell) {
+        this->LOAD(a->offset);
+        this->LOAD("a");
+        this->SWAP("b");
+        this->LOAD(b->offset);
+        this->LOAD("a");
+        this->SWAP("c");
+    } else if (!a->is_addr_cell && b->is_addr_cell) {
+        this->LOAD(b->offset);
+        this->LOAD("a");
+        this->SWAP("c");
+        this->LOAD(a->offset);
+        this->SWAP("b");
+    } else if (a->is_addr_cell && !b->is_addr_cell) {
+        this->LOAD(a->offset);
+        this->LOAD("a");
+        this->SWAP("b");
+        this->LOAD(b->offset);
+        this->SWAP("c");
+    } else {
+        this->LOAD(a->offset);
+        this->SWAP("b");
+        this->LOAD(b->offset);
+        this->SWAP("c");
+    }
+    
+    this->RESET("a"); //  r_a = 0, r_b = 15, r_c = 3
+    // r_a wartośc b
+    // r_b rejest pusty
+    // r_c wartość a
+    
+    this->SWAP("b");
+    this->SWAP("c");
+    
+    this->JZERO(19);
+
+    this->SWAP("c");
+    this->JPOS(4);
+    this->SWAP("b");
+    this->SUB("b");
+    this->RESET("b");
+
+    this->SWAP("c");
+    this->JNEG(7);
+
+    this->SWAP("c");
+    this->SUB("c");
+    this->JNEG(2);
+    this->JUMP(-2);
+    this->ADD("c");
+    this->JUMP(6);
+    
+
+    this->SWAP("c");
+    this->ADD("c");
+    this->JNEG(2);
+    this->JUMP(-2);
+    
+    this->SUB("c");
+    this->SWAP("b");
+    this->SUB("b");
+    
+    this->SWAP("b");
+}
 
 void Code::div(symbol* a, symbol* b) {
     this->check_init(a);
