@@ -32,8 +32,8 @@ specialChars    [\;\[\]\:\,]
 "ENDFOR"        { return ENDFOR; }
 
 "WHILE"         { return WHILE; }
-"DO"            { return DO; }
-"ENDDO"         { return ENDDO; }
+"REPEAT"        { return REPEAT; }
+"UNTIL"         { return UNTIL; }
 "ENDWHILE"      { return ENDWHILE; }
 
 

@@ -1,0 +1,9 @@
+VAR
+    i
+BEGIN
+    i ASSIGN 0;
+    REPEAT
+        WRITE i;
+        i ASSIGN i MINUS 1;
+    UNTIL i GEQ 4
+END

@@ -26,6 +26,8 @@ class Code {
         cond_label* if_else_first_block(cond_label* label);
         void if_else_second_block(cond_label* label);
         void while_block(cond_label* label);
+        cond_label* repeat_until_first_block();
+        void repeat_until_second_block(cond_label* label, cond_label* cond);
         void write(symbol* sym);
         void read(symbol* sym);
         

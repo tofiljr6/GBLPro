@@ -74,6 +74,14 @@ void Code::while_block(cond_label* label) {
     this->JUMP(label->start - this->pc);
     this->if_block(label);
 }
+cond_label* Code::repeat_until_first_block() {
+    return new cond_label(0, this->pc - 1);
+}
+
+void Code::repeat_until_second_block(cond_label* label, cond_label* cond) {
+    this->JUMP(label->go_to  - this->pc);
+    this->if_block(cond);
+}
 
 void Code::write(symbol* sym) {
     // czytanie różni się od tego jak symbol chcemy wydrukować, musimy załadować
