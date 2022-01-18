@@ -27,6 +27,7 @@ class Code {
         void load_value(symbol* sym);
         void plus(symbol* a, symbol* b);
         void minus(symbol* a, symbol* b);
+        void times(symbol* a, symbol* b);
         
         // VALUE & PIDs
         symbol* get_num(long long num);
@@ -58,7 +59,14 @@ class Code {
         void STORE(string r);
         void LOAD(long long offset);
         void LOAD(string r);
+        void LOAD(symbol* sym);
         void SWAP(string r);
         void PUT();
+        void JUMP(long long j);
+        void JPOS(long long j);
+        void JZERO(long long j);
+        void JNEG(long long j);
+        
+        void printregister(); // only for tests
   
 };

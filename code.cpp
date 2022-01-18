@@ -27,9 +27,7 @@ void Code::assign(symbol* var) {
     // offsetowi zmiennej, przypisujemy aktualną zawartość rejestru a
     symbol* test = this->data->get_symbol(var->name);
     test->is_init = true;
-    
-    // this->PUT();
-    
+
     if (var->is_addr_cell) {
         this->STORE("f");
     } 
@@ -138,52 +136,28 @@ void Code::minus(symbol* a, symbol* b) {
         // powtarzamy czynność dla symbolu b  oraz wyniki
         // zachowujemy w rejestrze 'a' - ze względy na to że potem nastąpi ASSIGN i 
         // on wymaga tego, żeby wartość którą chcemy zapisać była w rejestrze 'a'
-        cout << a->name << ":" << b->name << endl;
         this->SWAP("g");
         this->RESET("a");
         this->DEC("a");
-        // this->PUT();
         this->SWAP("g");
 
         this->LOAD(a->offset);
-        // this->PUT();
         this->LOAD("a");
-        // this->PUT();
         this->SWAP("b");
         
         this->LOAD(b->offset);
-        // this->PUT();
         this->LOAD("a");
-        // this->PUT();
-        
         this->SWAP("b");
         this->SUB("b");
-        // this->PUT();
-        
-        
-        
-        
-        // this->LOAD("a");
-        // this->SWAP("f");
-        // this->LOAD(b->offset);
-        // this->LOAD("a");
-        // this->SUB("f");
     } else if (!a->is_addr_cell && b->is_addr_cell) {
-        // cout << a->name << ":" << b->name << endl;
         this->LOAD(a->offset);
-        // this->PUT(); // 33
         this->SWAP("f");
         this->RESET("a");
         this->LOAD(b->offset);
-        // this->PUT(); // 13
         this->LOAD("a");
-        // this->PUT();
         this->SWAP("f");
         this->SUB("f");
-        // this->PUT();
-        // this->HALT();
     } else if (a->is_addr_cell && !b->is_addr_cell) {
-        // cout << a->name << ":" << b->name << endl;
         this->LOAD(a->offset);
         this->LOAD("a");
         this->SWAP("f");
@@ -191,7 +165,6 @@ void Code::minus(symbol* a, symbol* b) {
         this->SWAP("f");
         this->SUB("f");
     } else {
-        // cout << a->value << "-" << b->value << endl;
         this->LOAD(a->offset);
         this->SWAP("b");
         this->LOAD(b->offset);
@@ -200,6 +173,103 @@ void Code::minus(symbol* a, symbol* b) {
     }
 }
 
+void Code::times(symbol* a, symbol* b) {
+    this->check_init(a);
+    this->check_init(b);
+    
+    // small optymalisation
+    if (b->is_const && b->value == 2) {
+        cout << "1" << endl;
+        this->LOAD(a);
+        this->RESET("b");
+        this->INC("b");
+        this->SHIFT("b");
+        return;
+    }
+    // small optymalisation
+    if (a->is_const && a->value == 2) {
+        cout << "2" << endl;
+        this->LOAD(b);
+        this->RESET("b");
+        this->INC("b");
+        this->SHIFT("b");
+        return;
+    }
+    
+    // przygotowanie zależne od zmiennych
+    // tak aby w rejestrze
+    // r_b znajdowała się wartość symbolu a
+    // r_c znajdowała się wartość symbolu b
+    // w r_a przechowywać będziemy ile już razy przemnożyliśmy
+    if (a->is_addr_cell && b->is_addr_cell) {
+        this->LOAD(a->offset);
+        this->LOAD("a");
+        this->SWAP("b");
+        this->LOAD(b->offset);
+        this->LOAD("a");
+        this->SWAP("c");
+    } else if (!a->is_addr_cell && b->is_addr_cell) {
+        this->LOAD(b->offset);
+        this->LOAD("a");
+        this->SWAP("b");
+        this->LOAD(a->offset);
+        this->SWAP("c");
+    } else if (a->is_addr_cell && !b->is_addr_cell) {
+        this->LOAD(a->offset);
+        this->LOAD("a");
+        this->SWAP("b");
+        this->LOAD(b->offset);
+        this->SWAP("c");
+    } else {
+        this->LOAD(a->offset);
+        this->SWAP("b");
+        this->LOAD(b->offset);
+        this->SWAP("c");
+    }
+    
+    this->RESET("a");
+    this->RESET("d");
+    this->RESET("e");
+    this->RESET("f");
+    this->RESET("g");
+    this->RESET("h");
+    
+    // pod rejestrem 'b' teraz mam mieć wartośc symbolu 'a',
+    // pod rejestrem 'c' teraz mam mieć wartośc symbolu 'b',
+    
+    this->ADD("b");
+    this->RESET("b");
+        
+    this->JZERO(15);
+    
+    this->JNEG(7);
+    this->DEC("a");
+    this->SWAP("b");
+    this->ADD("c");
+    this->SWAP("b");
+    this->JZERO(9);
+    this->JUMP(-5);
+    
+    this->JPOS(7);
+    this->INC("a");
+    this->SWAP("b");
+    this->SUB("c");
+    this->SWAP("b");
+    this->JZERO(2);
+    this->JUMP(-5);
+    
+    this->SWAP("b");
+}
+
+void Code::printregister() {
+    this->PUT();
+    this->SWAP("b");
+    this->PUT();
+    this->SWAP("b");
+    this->SWAP("c");
+    this->PUT();
+    this->SWAP("c");
+}
 
 // VALUES & PIDs
 
@@ -472,6 +542,20 @@ void Code::LOAD(string r) {
     this->pc++;
 }
 
+void Code::LOAD(symbol* sym) {
+    if (sym->is_addr_cell) {
+        this->generate_value_in_register(sym->offset, "g");
+        this->code.push_back("LOAD g");
+        this->LOAD("a");
+        this->pc++;
+    } else {
+        this->generate_value_in_register(sym->offset, "g");
+        this->code.push_back("LOAD g");
+        this->pc++;
+    }
+}
+
+
 void Code::SWAP(string r) {
     this->code.push_back("SWAP " + r);
     this->pc++;
@@ -482,4 +566,23 @@ void Code::PUT() {
     this->pc++;
 }
 
+void Code::JUMP(long long j) {
+    this->code.push_back("JUMP " + to_string(j));
+    this->pc++;
+}
+
+void Code::JPOS(long long j) {
+    this->code.push_back("JPOS " + to_string(j));
+    this->pc++;
+}
+
+void Code::JZERO(long long j) {
+    this->code.push_back("JZERO " + to_string(j));
+    this->pc++;
+}
+
+void Code::JNEG(long long j) {
+    this->code.push_back("JNEG " + to_string(j));
+    this->pc++;
+}
 

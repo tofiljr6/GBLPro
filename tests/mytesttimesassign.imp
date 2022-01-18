@@ -1,0 +1,41 @@
+VAR 
+    i, j, k, l, m, n, o, p, r, q, w, e, t, y, u, a, arr[0:5]
+BEGIN
+    j ASSIGN 4 TIMES 6;
+    k ASSIGN 11 TIMES 11;
+    l ASSIGN -12 TIMES -12;
+    m ASSIGN 11 TIMES -6;
+    n ASSIGN -4 TIMES 5;
+    o ASSIGN n TIMES 4;
+    p ASSIGN 3 TIMES j;
+    
+    arr[0] ASSIGN 5;
+    r  ASSIGN arr[0] TIMES 7;
+    q ASSIGN 9 TIMES arr[0];
+    
+    w ASSIGN 1;
+    arr[w] ASSIGN 5;
+    e ASSIGN arr[w] TIMES 10;
+    t ASSIGN 15 TIMES arr[w];
+    
+    y ASSIGN 2;
+    arr[y] ASSIGN 30;
+    u ASSIGN arr[y] TIMES arr[w];
+    a ASSIGN arr[w] TIMES arr[y];
+    
+    
+    
+    WRITE j; ( = 24 )
+    WRITE k; ( =121 )
+    WRITE l; ( =144 )
+    WRITE m; ( =-66 )
+    WRITE n; ( =-20 )
+    WRITE o; ( =-80 )
+    WRITE p; ( = 72 )
+    WRITE r; ( = 35 )
+    WRITE q; ( = 45 )
+    WRITE e; ( = 50 )
+    WRITE t; ( = 75 )
+    WRITE u; ( =150 )
+    WRITE a; ( =150 )
+END
