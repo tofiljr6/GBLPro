@@ -53,6 +53,7 @@ void Code::assign(symbol* var) {
 }
 
 void Code::if_block(cond_label* label) {
+    cout << label->go_to << ":" << this->pc - label->go_to << endl;
     this->code[label->go_to] += std::to_string(this->pc - label->go_to);
 }
 
@@ -434,6 +435,15 @@ cond_label* Code::eq(symbol* a, symbol* b) {
     return new cond_label(start, addr);
 }
 
+cond_label* Code::neq(symbol* a, symbol* b) {
+    long long start = this->pc;
+    this->minus(a, b);
+    this->JZERO();
+    long long addr = this->pc - 1;
+    
+    return new cond_label(start, addr);
+}
+
 
 void Code::printregister() {
     this->PUT();
@@ -757,6 +767,11 @@ void Code::JPOS(long long j) {
 
 void Code::JZERO(long long j) {
     this->code.push_back("JZERO " + to_string(j));
+    this->pc++;
+}
+
+void Code::JZERO() {
+    this->code.push_back("JZERO ");
     this->pc++;
 }
 

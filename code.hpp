@@ -36,6 +36,7 @@ class Code {
         
         // CONDITIONS
         cond_label* eq(symbol* a, symbol* b);
+        cond_label* neq(symbol* a, symbol* b);
         
         // VALUE & PIDs
         symbol* get_num(long long num);
@@ -71,6 +72,7 @@ class Code {
         void SWAP(string r);
         void PUT();
         void JUMP();
+        void JZERO();
         void JUMP(long long j);
         void JPOS(long long j);
         void JZERO(long long j);
