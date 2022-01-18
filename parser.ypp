@@ -91,7 +91,7 @@ expression:     value                                                       { co
 
 condition:      value EQ value                                              { $$ = code->eq($1, $3); }
               | value NEQ value                                             { $$ = code->neq($1, $3); }
-              | value LE value                                              { ; }
+              | value LE value                                              { $$ = code->le($1, $3); }
               | value GE value                                              { ; }
               | value LEQ value                                             { ; }
               | value GEQ value                                             { ; }

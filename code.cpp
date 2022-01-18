@@ -444,6 +444,16 @@ cond_label* Code::neq(symbol* a, symbol* b) {
     return new cond_label(start, addr);
 }
 
+cond_label* Code::le(symbol* a, symbol* b) {
+    long long start = this->pc;
+    this->minus(a, b);
+    this->JNEG(2);
+    long long addr = this->pc;
+    this->JUMP();
+    
+    return new cond_label(start, addr);
+}
+
 
 void Code::printregister() {
     this->PUT();

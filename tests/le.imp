@@ -1,0 +1,55 @@
+VAR 
+    i, j, arr[0:5]
+BEGIN
+    IF 1 LE 1 THEN
+        WRITE 0;
+    ENDIF
+    IF 1 LE 2 THEN
+        WRITE 1;
+    ENDIF
+    
+    i ASSIGN 1;
+    IF 1 LE i THEN
+        WRITE 2;
+    ENDIF
+    
+    i ASSIGN 2;
+    IF 1 LE i THEN
+        WRITE 3;
+    ENDIF
+    
+    arr[0] ASSIGN 5;
+    IF 5 LE arr[0] THEN
+        WRITE 4;
+    ENDIF
+    
+    arr[0] ASSIGN 6;
+    IF 5 LE arr[0] THEN
+        WRITE 5;
+    ENDIF
+    
+    IF arr[0] LE arr[0] THEN
+        WRITE 6;
+    ENDIF
+    
+    j ASSIGN 2;
+    arr[j] ASSIGN 10;
+    IF arr[j] LE 11 THEN
+        WRITE 7;
+    ENDIF
+    
+    IF 11 LE arr[j] THEN
+        WRITE 9;
+    ENDIF
+    
+    IF arr[j] LE arr[j] THEN
+        WRITE 11;
+    ENDIF
+END
+
+(
+    > 1
+    > 3
+    > 5
+    > 7
+)

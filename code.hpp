@@ -37,6 +37,7 @@ class Code {
         // CONDITIONS
         cond_label* eq(symbol* a, symbol* b);
         cond_label* neq(symbol* a, symbol* b);
+        cond_label* le(symbol* a, symbol* b);
         
         // VALUE & PIDs
         symbol* get_num(long long num);
