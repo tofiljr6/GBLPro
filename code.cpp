@@ -72,6 +72,21 @@ void Code::write(symbol* sym) {
     }
 }
 
+void Code::read(symbol* sym) {
+    this->GET();
+    if (!sym->is_addr_cell) {
+        this->STORE(sym->offset);
+        sym->is_init = true;
+    } else {
+        this->SWAP("f");
+        this->generate_value_in_register(sym->offset, "a");
+        this->LOAD("a");
+        this->SWAP("b");
+        this->SWAP("f");
+        this->STORE("b");
+    }
+}
+
 // EXPRESSIONS
 
 void Code::load_value(symbol* sym) {
@@ -726,6 +741,11 @@ void Code::JZERO(long long j) {
 
 void Code::JNEG(long long j) {
     this->code.push_back("JNEG " + to_string(j));
+    this->pc++;
+}
+
+void Code::GET() {
+    this->code.push_back("GET ");
     this->pc++;
 }
 

@@ -22,6 +22,7 @@ class Code {
         // COMMANDS
         void assign(symbol* var);
         void write(symbol* sym);
+        void read(symbol* sym);
         
         // EXPRESSIONS
         void load_value(symbol* sym);
@@ -68,6 +69,7 @@ class Code {
         void JPOS(long long j);
         void JZERO(long long j);
         void JNEG(long long j);
+        void GET();
         
         void printregister(); // only for tests
   

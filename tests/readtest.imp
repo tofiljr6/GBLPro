@@ -1,0 +1,13 @@
+VAR 
+    i, j, arr[0:5]
+BEGIN
+    j ASSIGN 2;
+    READ i;
+    READ arr[0];
+    READ arr[j];
+    
+    WRITE i;      
+    WRITE arr[0]; 
+    WRITE arr[j]; 
+END
+

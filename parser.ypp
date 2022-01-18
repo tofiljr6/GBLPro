@@ -76,7 +76,9 @@ commands:       commands command
 command:        identifier ASSIGN expression';'                             {
                                                                             code->assign($1);
                                                                             }
-              | READ identifier';'                                          
+              | READ identifier';'                                          {
+                                                                            code->read($2);
+                                                                            }
               | WRITE value';'                                              { 
                                                                             code->write($2);
                                                                             }
