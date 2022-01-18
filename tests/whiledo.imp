@@ -1,0 +1,9 @@
+VAR
+    a
+BEGIN
+    a ASSIGN 4;
+    WHILE a GEQ 0 DO
+        WRITE a;
+        a ASSIGN a MINUS 1;
+    ENDWHILE
+END

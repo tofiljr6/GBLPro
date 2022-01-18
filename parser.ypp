@@ -75,7 +75,7 @@ command:        identifier ASSIGN expression';'                             { co
               | IF condition THEN commands                                  { $1 = code->if_else_first_block($2); }
                 ELSE commands ENDIF                                         { code->if_else_second_block($1); }
               | IF condition THEN commands ENDIF                            { code->if_block($2); }
-              | WHILE condition DO commands ENDWHILE                        { ; }
+              | WHILE condition DO commands ENDWHILE                        { code->while_block($2); }
               | REPEAT commands UNTIL condition                             { ; }
               | READ identifier';'                                          { code->read($2); }
               | WRITE value';'                                              { code->write($2); }

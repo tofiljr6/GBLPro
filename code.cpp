@@ -70,6 +70,11 @@ void Code::if_else_second_block(cond_label* label) {
     this->if_block(label);
 }
 
+void Code::while_block(cond_label* label) {
+    this->JUMP(label->start - this->pc);
+    this->if_block(label);
+}
+
 void Code::write(symbol* sym) {
     // czytanie różni się od tego jak symbol chcemy wydrukować, musimy załadować
     // offset offsetu aby dostać się do wartości
