@@ -211,9 +211,9 @@ void Code::times(symbol* a, symbol* b) {
     } else if (!a->is_addr_cell && b->is_addr_cell) {
         this->LOAD(b->offset);
         this->LOAD("a");
-        this->SWAP("b");
-        this->LOAD(a->offset);
         this->SWAP("c");
+        this->LOAD(a->offset);
+        this->SWAP("b");
     } else if (a->is_addr_cell && !b->is_addr_cell) {
         this->LOAD(a->offset);
         this->LOAD("a");
@@ -241,24 +241,94 @@ void Code::times(symbol* a, symbol* b) {
     this->RESET("b");
         
     this->JZERO(15);
+        this->JNEG(7);
+        this->DEC("a");
+        this->SWAP("b");
+        this->ADD("c");
+        this->SWAP("b");
+        this->JZERO(9);
+        this->JUMP(-5);
+        
+        this->JPOS(7);
+        this->INC("a");
+        this->SWAP("b");
+        this->SUB("c");
+        this->SWAP("b");
+        this->JZERO(2);
+        this->JUMP(-5);
     
-    this->JNEG(7);
-    this->DEC("a");
-    this->SWAP("b");
-    this->ADD("c");
-    this->SWAP("b");
-    this->JZERO(9);
-    this->JUMP(-5);
+    this->SWAP("b"); // znajduje się wynik w r_b, a result musimy przechować w r_a
+}
+
+
+void Code::div(symbol* a, symbol* b) {
+    this->check_init(a);
+    this->check_init(b);
     
-    this->JPOS(7);
-    this->INC("a");
-    this->SWAP("b");
-    this->SUB("c");
-    this->SWAP("b");
-    this->JZERO(2);
-    this->JUMP(-5);
+    if (b->is_const && b->value == 2) {
+        this->LOAD(a->offset);
+        this->RESET("b");
+        this->DEC("b");
+        this->SHIFT("b");
+        return;
+    }
     
-    this->SWAP("b");
+    // przygotowanie zależne od zmiennych
+    // tak aby w rejestrze
+    // r_b znajdowała się wartość symbolu a
+    // r_c znajdowała się wartość symbolu b
+    // w r_a przechowywać będziemy ile już razy przemnożyliśmy
+    if (a->is_addr_cell && b->is_addr_cell) {
+        this->LOAD(a->offset);
+        this->LOAD("a");
+        this->SWAP("c");
+        this->LOAD(b->offset);
+        this->LOAD("a");
+        this->SWAP("a");
+    } else if (!a->is_addr_cell && b->is_addr_cell) {
+        this->LOAD(b->offset);
+        this->LOAD("a");
+        this->SWAP("c");
+        this->LOAD(a->offset);
+        this->SWAP("a");
+        this->SWAP("c");    // REFACTOR: mogę sie pozbyć tego SWAP'a
+    } else if (a->is_addr_cell && !b->is_addr_cell) {
+        this->LOAD(a->offset);
+        this->LOAD("a");
+        this->SWAP("c");
+        this->LOAD(b->offset);
+        this->SWAP("a");
+    } else {
+        this->LOAD(a->offset);
+        this->SWAP("c");
+        this->LOAD(b->offset);
+        this->SWAP("a");
+    }
+    this->RESET("b");
+    
+    this->JZERO(18);
+        this->SWAP("c");
+        this->JPOS(4); // if a is neg changes it to pos
+        this->SWAP("b");
+        this->SUB("b");
+        this->RESET("b");
+
+        this->SWAP("c");
+        this->JNEG(6);
+        //b+
+        this->SWAP("c");
+        this->SUB("c");
+        this->JNEG(8);
+        this->INC("b");
+        this->JUMP(-3);
+        //b-
+        this->SWAP("c");
+        this->ADD("c");
+        this->JNEG(3);
+        this->DEC("b");
+        this->JUMP(-3);
+        
+    this->SWAP("b"); // znajduje się wynik w r_b, a result musimy przechować w r_a
 }
 
 void Code::printregister() {

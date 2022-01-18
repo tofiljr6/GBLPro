@@ -1,0 +1,9 @@
+VAR 
+    i, j, k, l, m, n, o, p, r, s, t, u, v, arr[0:5], za, zb, zc, zd, ze, zf, zg, zh
+BEGIN
+    za ASSIGN 26 DIV 7;
+    zb ASSIGN 26 DIV -7;  ( źle )
+    zc ASSIGN -26 DIV 7;  ( źle )
+    zd ASSIGN -26 DIV -7; ( źle )
+    WRITE za;
+END
