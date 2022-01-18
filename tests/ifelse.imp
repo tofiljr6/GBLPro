@@ -1,0 +1,62 @@
+BEGIN
+    IF 1 EQ 2 THEN 
+        WRITE 1;
+    ELSE 
+        WRITE 3;
+    ENDIF
+    
+    IF 1 EQ 1 THEN 
+        WRITE 1;
+    ELSE 
+        WRITE 3;
+    ENDIF
+    
+    IF 1 LE 2 THEN 
+        WRITE 1;
+    ELSE 
+        WRITE 3;
+    ENDIF
+    
+    IF 4 LE 2 THEN 
+        WRITE 1;
+    ELSE 
+        WRITE 3;
+    ENDIF
+    
+    IF 4 LEQ 4 THEN 
+        WRITE 1;
+    ELSE 
+        WRITE 3;
+    ENDIF
+    
+    IF 4 GEQ 4 THEN 
+        WRITE 1;
+    ELSE 
+        WRITE 3;
+    ENDIF
+    
+    IF 9 GE 4 THEN 
+        WRITE 1;
+    ELSE 
+        WRITE 3;
+    ENDIF
+    
+    IF 9 GE 40 THEN 
+        WRITE 1;
+    ELSE 
+        WRITE 3;
+    ENDIF
+    
+    
+END
+
+(
+    > 3
+    > 1
+    > 1
+    > 3
+    > 1
+    > 1
+    > 1
+    > 3
+)

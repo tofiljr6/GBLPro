@@ -72,8 +72,8 @@ commands:       commands command
 ;              
 
 command:        identifier ASSIGN expression';'                             { code->assign($1); }
-              | IF condition THEN commands                                  { ; }
-                ELSE commands ENDIF                                         { ; }
+              | IF condition THEN commands                                  { $1 = code->if_else_first_block($2); }
+                ELSE commands ENDIF                                         { code->if_else_second_block($1); }
               | IF condition THEN commands ENDIF                            { code->if_block($2); }
               | WHILE condition DO commands ENDWHILE                        { ; }
               | REPEAT commands UNTIL condition                             { ; }
