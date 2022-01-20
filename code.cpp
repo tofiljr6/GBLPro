@@ -28,13 +28,25 @@ void Code::assign(symbol* var) {
     // offsetowi zmiennej, przypisujemy aktualną zawartość rejestru a
     symbol* test = this->data->get_symbol(var->name);
     test->is_init = true;
-
+    
+    // cout << var->name << ":" << var->offset << endl;
+    
+    
     if (var->is_iterator) {
         throw std::string(var->name + " - try change value of iterator");
     }
 
     if (var->is_addr_cell) {
-        this->STORE("f");
+        // cout << var->name << ":" << var->offset << endl;
+        
+        // this->STORE("f");
+        // this->PUT();
+        this->SWAP("b");
+        this->generate_value_in_register(var->offset, "a");
+        this->LOAD("a");
+        this->SWAP("c");
+        this->SWAP("b");
+        this->STORE("c");
     } 
     else if(var->is_array_cell) {
         this->SWAP("f");
@@ -76,6 +88,7 @@ void Code::while_block(cond_label* label) {
     this->JUMP(label->start - this->pc);
     this->if_block(label);
 }
+
 cond_label* Code::repeat_until_first_block() {
     return new cond_label(0, this->pc - 1);
 }
@@ -120,7 +133,7 @@ for_label* Code::for_first_block(std::string iterator_name, symbol* start, symbo
     this->LOAD("a");
     
     this->SUB("b");
-    cout << "JUMPING 2:" << this->pc << ":" << sum << endl;
+    // cout << "JUMPING 2:" << this->pc << ":" << sum << endl;
     cond_label* label = new cond_label(this->pc + sum + 4, this->pc );
     
     this->generate_value_in_register(end_tmp->offset, "a"); // -----|
@@ -141,7 +154,7 @@ for_label* Code::for_first_block(std::string iterator_name, symbol* start, symbo
 }
 
 void Code::for_second_block(for_label* label, bool to) {
-    cout << ":" << label->iterator->offset << endl;
+    // cout << ":" << label->iterator->offset << endl;
     this->generate_value_in_register(label->iterator->offset, "a");
     this->LOAD("a");
 
@@ -214,6 +227,7 @@ void Code::load_value(symbol* sym) {
     // wtedy musimy załadować wskazanie offset'u
     this->check_init(sym);
     if (sym->is_addr_cell) {
+        cout << "\t" << sym->name << ":" << sym->offset << endl;
         this->LOAD(sym->offset);
         this->LOAD("a");
     } 

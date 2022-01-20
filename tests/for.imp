@@ -1,10 +1,35 @@
 VAR
-    j
+    j, p,  arr[5:7], brr[5:7], crr[5:7], drr[5:7]
 BEGIN
-    j ASSIGN 4;
-    FOR i FROM 1 TO 15 DO
-        ( i ASSIGN 5; ) 
-        j ASSIGN i PLUS i;
-        WRITE j;
+    j ASSIGN 5;
+    brr[5] ASSIGN 10;
+    brr[6] ASSIGN 20;
+    brr[7] ASSIGN 30;
+    
+    FOR i FROM 5 TO 7 DO
+        arr[i] ASSIGN brr[i] PLUS brr[i];
+        brr[i] ASSIGN brr[i] PLUS j;
+        crr[i] ASSIGN j PLUS brr[i];
+        
     ENDFOR
+    
+    WRITE -1;
+    
+    FOR i FROM 5 TO 7 DO
+        WRITE arr[i];
+    ENDFOR
+    
+    WRITE -1;
+    
+    FOR i FROM 5 TO 7 DO
+        WRITE brr[i];
+    ENDFOR
+    
+    WRITE -1;
+    
+    FOR i FROM 5 TO 7 DO
+        WRITE crr[i];
+    ENDFOR
+    
+    
 END
