@@ -189,17 +189,21 @@ void Code::write(symbol* sym) {
 
 void Code::read(symbol* sym) {
     this->GET();
+
     if (!sym->is_addr_cell) {
-        this->STORE(sym->offset);
+        // zmienna
+        this->SWAP("b");
+        this->generate_value_in_register(sym->offset, "c");
+        this->SWAP("b");
+        this->STORE("c");
         sym->is_init = true;
     } else {
-        this->SWAP("f");
+        this->SWAP("c");
         this->generate_value_in_register(sym->offset, "a");
         this->LOAD("a");
-        this->SWAP("b");
-        this->SWAP("f");
-        this->STORE("b");
-    }
+        this->SWAP("c");
+        this->STORE("c");
+    } 
 }
 
 // EXPRESSIONS
