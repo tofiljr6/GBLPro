@@ -75,6 +75,20 @@ symbol* Data::get_symbol(string name) {
     return this->sym_map[name].get();
 }
 
+void Data::put_iterator(std::string name) {
+    if (this->check_context(name)) {
+        throw std::string("Redeclarating iterator - " + name);
+    }
+
+    std::shared_ptr<symbol> sym = std::make_shared<symbol>(name, this->memory_offset);
+    this->memory_offset++;
+    this->sym_map[name] = sym;
+}
+
+void Data::remove_iterator(std::string name) {
+    sym_map.erase(name);
+}
+
 void Data::init_constant(string name, long long value) {
     symbol* sym = this->get_symbol(name);
     sym->is_init = true;

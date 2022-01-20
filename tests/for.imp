@@ -1,0 +1,9 @@
+VAR
+    j 
+BEGIN
+    j ASSIGN 1;
+    FOR i FROM -3 TO -1 DO
+        WRITE j;
+        j ASSIGN j PLUS 1;
+    ENDFOR
+END

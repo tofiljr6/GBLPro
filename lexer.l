@@ -26,9 +26,11 @@ specialChars    [\;\[\]\:\,]
 "END"           { return END; }
 "ASSIGN"        { return ASSIGN; }
 
+"FOR"           { return FOR; }
 "FROM"          { return FROM; }
 "DOWNTO"        { return DOWNTO; }
 "TO"            { return TO; }
+"DO"            { return DO; }
 "ENDFOR"        { return ENDFOR; }
 
 "WHILE"         { return WHILE; }

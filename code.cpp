@@ -83,6 +83,221 @@ void Code::repeat_until_second_block(cond_label* label, cond_label* cond) {
     this->if_block(cond);
 }
 
+for_label* Code::for_first_block(std::string iterator_name, symbol* start, symbol* end, bool to) {
+    /*
+    
+    // cout << "for_first_block" << endl;
+    symbol* iterator = this->data->get_symbol(iterator_name);
+    this->check_init(start);
+    this->check_init(end);
+    
+    this->RESET("a");
+    this->RESET("b");
+    this->RESET("c");
+    this->RESET("d");
+    
+    std::string end_name = "END" + std::to_string(this->data->memory_offset);
+    this->data->put_symbol(end_name, true);
+    symbol* end_tmp = this->data->get_symbol(end_name);
+    
+    cout << end_tmp->offset << ":" << start->offset << ":" <<  end->offset<< endl;
+    
+    this->LOAD(end);
+    // this->PUT(); // 12
+    this->SWAP("b");
+    
+    this->generate_value_in_register(end_tmp->offset, "a");
+    // this->PUT(); // 8
+    this->SWAP("b");
+    this->STORE("b");
+    
+    // initializing iterator
+    this->LOAD(start);
+    // this->PUT(); // 3
+    this->SWAP("c");
+    
+    this->generate_value_in_register(iterator->offset, "d");
+    // this->SWAP("d");
+    // this->PUT(); // 7
+    this->SWAP("c");
+    this->STORE("d");
+    
+    //--
+    long long s = this->pc;
+    this->generate_value_in_register(end_tmp->offset, "b");
+    long long e = this->pc - s;
+    // this->LOAD("b");
+    // this->PUT(); // 12
+    // this->SWAP("b");
+    long long s1 = this->pc;
+    this->generate_value_in_register(iterator->offset, "c");
+    long long e1 = this->pc - s1;
+    // this->LOAD("c");
+    // this->PUT(); // 3
+    // this->SUB("b");
+    // this->PUT(); // -9
+    
+    // this->HALT();
+    
+    cond_label* label = new cond_label(this->pc + 4 + e1 + e + 1 + 3, 0);
+    
+    this->generate_value_in_register(end_tmp->offset, "b");
+    this->LOAD("b");                // + 1
+    this->PUT(); // 12
+    
+    this->SWAP("b");                // + 2
+    this->generate_value_in_register(iterator->offset, "c");
+    this->LOAD("c");                // + 3
+    this->PUT(); // 3
+    this->PUT(); // 3
+    this->SUB("b");                 // + 4
+    this->PUT(); // -9
+
+    if (to) {
+        // this->PUT(); // + 1 // -9
+        this->JPOS(); // JPOS j if r_a > 0 then k += j, elee k++;
+    } else {
+        this->JNEG();
+    }
+    
+    // cond_label* label = new cond_label(this->pc + 1, -this->pc);
+    return new for_label(iterator, start, end_tmp, label, false);
+    */
+    // cout << "for_first_block" <<
+    // symbol* iterator = this->data->get_symbol(iterator_name);
+    // this->check_init(start);
+    // this->check_init(end);
+    // cond_label* label = this->leq(start, end);
+    // // cout << ":::" << label->start << ":" << label->go_to << endl;
+    // // this->HALT();
+    // // this->while_block(label);
+    // this->JUMP(label->go_to - this->pc);
+    // this->if_block()
+    
+    symbol* iterator = this->data->get_symbol(iterator_name);
+    this->check_init(start);
+    this->check_init(end);
+    
+    std::string end_name = "END" + std::to_string(this->data->memory_offset);
+    this->data->put_symbol(end_name, true);
+    symbol* end_tmp = this->data->get_symbol(end_name);
+    
+    // this->RESET("                   a");
+    long long jumping = this->pc;
+    cout << "JUMPING: " << this->pc << endl;
+    
+    this->LOAD(end);
+    this->SWAP("b");
+    long long stependtmpstart = this->pc;
+    this->generate_value_in_register(end_tmp->offset, "a");
+    long long stependtmpend = this->pc - stependtmpstart;
+    this->SWAP("b");
+    this->STORE("b");
+    
+    // init iterator
+    this->LOAD(start);
+    this->SWAP("b");
+    long long stepiteratorstart = this->pc;
+    this->generate_value_in_register(iterator->offset, "a");
+    long long stepiteratorend = this->pc - stepiteratorstart;
+    this->SWAP("b");
+    this->STORE("b");
+    
+    long long sum = stependtmpend + stepiteratorend;
+    
+    // this->generate_value_in_register(7, "a");
+    // this->LOAD("a");
+    // this->PUT();
+    
+    // this->HALT();
+    
+    this->generate_value_in_register(end_tmp->offset, "a");
+    this->LOAD("a");
+    this->SWAP("b");
+    this->generate_value_in_register(iterator->offset, "a");
+    this->LOAD("a");
+    // this->printregister();
+    
+    this->SUB("b");
+    // this->PUT();
+    // this->HALT();
+    
+    // this->PUT();
+    
+
+    cout << "JUMPING 2:" << this->pc << ":" << sum << endl;
+    cond_label* label = new cond_label(this->pc + sum + 4, this->pc );
+    
+    this->generate_value_in_register(end_tmp->offset, "a");
+    this->LOAD("a");
+    this->SWAP("b");
+    this->generate_value_in_register(iterator->offset, "a");
+    this->LOAD("a");
+    this->SUB("b");
+    
+    this->JPOS();
+    return new for_label(iterator, start, end_tmp, label, false);
+}
+
+void Code::for_second_block(for_label* label, bool to) {
+    /*
+    cout << "for_second_block" << endl;
+    if (label->unroll) {
+    } else {
+        // cout << "F2NDBLOCK " << label->iterator->offset << endl;
+        // this->LOAD(label->iterator->offset);
+        this->generate_value_in_register(label->iterator->offset, "a");
+        this->LOAD("a");
+        // this->PUT(); // 3
+        // this->PUT();
+        // this->HALT();
+        // this->LOAD("a");
+        // this->PUT();
+        // this->HALT();
+        // this->PUT();
+        if (to) {
+            this->INC("a");
+            // this->DEC("a");
+        } else {
+            this->DEC("a");
+        }
+        // this->PUT(); // 4
+        
+        this->SWAP("e");
+        this->generate_value_in_register(label->iterator->offset, "a");
+        // this->PUT(); // 7
+        this->SWAP("e");
+        this->STORE("e");
+        
+        this->generate_value_in_register(7, "a");
+        this->LOAD("a");
+        // this->PUT();
+        
+        // this->HALT();
+        
+        this->JUMP(-label->jump_label->start);
+        this->code[label->jump_label->start] += std::to_string(this->pc - label->jump_label->start); // to na pewno git
+        cout << label->jump_label->start << endl;
+    }
+    */
+    cout << ":" << label->iterator->offset << endl;
+    this->generate_value_in_register(label->iterator->offset, "a");
+    this->LOAD("a");
+    this->INC("a");
+    this->SWAP("b");
+    this->generate_value_in_register(label->iterator->offset, "c");
+    this->SWAP("b");
+    this->STORE("c");
+
+    cout << "qwert" << label->jump_label->go_to << ":" << this->pc << endl;
+    cout << this->pc - label->jump_label->go_to << endl;
+    this->JUMP(- (this->pc - label->jump_label->go_to));
+    // this->JUMP(-label->jump_label->go_to - 1);
+    this->code[label->jump_label->start] += to_string(this->pc - label->jump_label->start); // to na pewno git
+    cout << label->jump_label->start << endl;
+    
+}
+
 void Code::write(symbol* sym) {
     // czytanie różni się od tego jak symbol chcemy wydrukować, musimy załadować
     // offset offsetu aby dostać się do wartości
@@ -166,7 +381,7 @@ void Code::plus(symbol* a, symbol* b) {
         this->LOAD(b->offset);
         this->ADD("f");
     } else {
-        cout << a->value << "+" << b->value << endl;
+        // cout << a->value << "+" << b->value << endl;
         this->LOAD(a->offset);
         this->SWAP("b");
         this->LOAD(b->offset);
@@ -655,14 +870,14 @@ void Code::generate_value_in_register(long long value, string r) {
     // mała optymalizacja, gdy wartość którą chcemy zapisać jest mniejsza od 10
     // to zapisujemy ją INC lub odpowiednio DEC we wskazanym rejestrze
     if (llabs(value) < 10) {
-        this->RESET(r);
+        this->RESET("   " + r);
         if (value > 0) {
             for (long long i = 0; i < value; i++) {
-                this->INC(r);
+                this->INC("   " + r);
             }
         } else {
             for (long long i = 0; i < -value; i++) {
-                this->DEC(r);
+                this->DEC("   " + r);
             }
         }
     } else {
@@ -676,32 +891,32 @@ void Code::generate_value_in_register(long long value, string r) {
             i++;
         }
         i--;
-        this->RESET("a");
+        this->RESET("   a");
         
         symbol* one = this->data->get_symbol("1");
-        this->generate_value_in_register(one->offset, "h");
+        this->generate_value_in_register(one->offset, "   h");
         
         for (; i > 0; i--) {
             if (digits[i] == 1) {
                 if (nonnegative) {
-                    this->INC("a");
+                    this->INC("   a");
                 } else {
-                    this->DEC("a");
+                    this->DEC("   a");
                 }
             }
             // to shiftuje to rejestru a
-            this->SHIFT("h");
+            this->SHIFT("   h");
         }
 
         if (digits[i] == 1) {
             if (nonnegative) {
-                this->INC("a");
+                this->INC("   a");
             } else {
-                this->DEC("a");
+                this->DEC("   a");
             }
         }
         // obecna wartość **value** jest przechowywana w rejestrze 'a'
-        this->SWAP(r);
+        this->SWAP("   " + r);
     }
 }
 

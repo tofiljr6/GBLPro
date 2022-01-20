@@ -28,6 +28,8 @@ class Code {
         void while_block(cond_label* label);
         cond_label* repeat_until_first_block();
         void repeat_until_second_block(cond_label* label, cond_label* cond);
+        for_label* for_first_block(std::string iterator_name, symbol* start, symbol* end, bool to);
+        void for_second_block(for_label* label, bool to);
         void write(symbol* sym);
         void read(symbol* sym);
         

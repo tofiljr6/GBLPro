@@ -34,11 +34,13 @@ shared_ptr<Code> code = make_shared<Code>(datacode);
     long long num;
     symbol* sym;
     cond_label* label;
+    for_label* f_label;
 }
 
 %start program
 %token VAR TBEGIN END
 %token <label> IF WHILE DO REPEAT
+%token <f_label> FOR
 %token UNTIL
 %token THEN ELSE ENDIF FROM TO DOWNTO ENDFOR ENDWHILE
 %token READ WRITE
@@ -79,6 +81,25 @@ command:        identifier ASSIGN expression';'                             { co
               | WHILE condition DO commands ENDWHILE                        { code->while_block($2); }
               | REPEAT                                                      { $1 = code->repeat_until_first_block(); }
                 commands UNTIL condition                                    { code->repeat_until_second_block($1, $5); }
+                
+                | FOR pidentifier FROM value TO value DO  { datacode->put_iterator(*$2);
+                                                            $1 = code->for_first_block(*$2, $4, $6, true); } 
+                commands ENDFOR { 
+                    code->for_second_block($1, true);
+                    // datacode->remove_iterator(*$2);
+                }
+              /* | FOR pidentifier FROM value TO value DO  { datacode->put_iterator(*$2);
+                                                          $1 = code->for_first_block(*$2, $4, $6, true);
+                                                        } 
+                commands 
+                ENDFOR { 
+                    code->for_second_block($1, true);
+                    // datacode->remove_iterator(*$2);
+                    } */
+              
+              
+              | FOR pidentifier FROM value DOWNTO value DO  commands ENDFOR  { ; }
+              
               | READ identifier';'                                          { code->read($2); }
               | WRITE value';'                                              { code->write($2); }
 ;              
