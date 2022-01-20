@@ -82,23 +82,12 @@ command:        identifier ASSIGN expression';'                             { co
               | REPEAT                                                      { $1 = code->repeat_until_first_block(); }
                 commands UNTIL condition                                    { code->repeat_until_second_block($1, $5); }
                 
-                | FOR pidentifier FROM value TO value DO  { datacode->put_iterator(*$2);
-                                                            $1 = code->for_first_block(*$2, $4, $6, true); } 
-                commands ENDFOR { 
-                    code->for_second_block($1, true);
-                    // datacode->remove_iterator(*$2);
-                }
-              /* | FOR pidentifier FROM value TO value DO  { datacode->put_iterator(*$2);
-                                                          $1 = code->for_first_block(*$2, $4, $6, true);
-                                                        } 
-                commands 
-                ENDFOR { 
-                    code->for_second_block($1, true);
-                    // datacode->remove_iterator(*$2);
-                    } */
-              
-              
-              | FOR pidentifier FROM value DOWNTO value DO  commands ENDFOR  { ; }
+              | FOR pidentifier FROM value TO value DO                      { datacode->put_iterator(*$2);
+                                                                              $1 = code->for_first_block(*$2, $4, $6, true); } 
+                commands ENDFOR                                             { code->for_second_block($1, true);  datacode->remove_iterator(*$2);} 
+              | FOR pidentifier FROM value DOWNTO value DO                  { datacode->put_iterator(*$2);
+                                                                              $1 = code->for_first_block(*$2, $4, $6, false); } 
+                commands ENDFOR                                             { code->for_second_block($1, false); datacode->remove_iterator(*$2);} 
               
               | READ identifier';'                                          { code->read($2); }
               | WRITE value';'                                              { code->write($2); }

@@ -1,9 +1,10 @@
 VAR
-    j 
+    j
 BEGIN
-    j ASSIGN 1;
-    FOR i FROM -3 TO -1 DO
+    j ASSIGN 4;
+    FOR i FROM 1 TO 15 DO
+        ( i ASSIGN 5; ) 
+        j ASSIGN i PLUS i;
         WRITE j;
-        j ASSIGN j PLUS 1;
     ENDFOR
 END

@@ -29,6 +29,10 @@ void Code::assign(symbol* var) {
     symbol* test = this->data->get_symbol(var->name);
     test->is_init = true;
 
+    if (var->is_iterator) {
+        throw std::string(var->name + " - try change value of iterator");
+    }
+
     if (var->is_addr_cell) {
         this->STORE("f");
     } 
@@ -40,12 +44,10 @@ void Code::assign(symbol* var) {
         // this->STORE(test->offset); // #5
     }
     else if (var->is_init && !var->is_const) {
-        // cout << var->name << ".is_const" << endl;
         this->SWAP("f");
         this->generate_value_in_register(test->offset, "b");
         this->SWAP("f");
         this->STORE("b");
-        
     }
     else {
         this->STORE(test->offset);
@@ -84,96 +86,6 @@ void Code::repeat_until_second_block(cond_label* label, cond_label* cond) {
 }
 
 for_label* Code::for_first_block(std::string iterator_name, symbol* start, symbol* end, bool to) {
-    /*
-    
-    // cout << "for_first_block" << endl;
-    symbol* iterator = this->data->get_symbol(iterator_name);
-    this->check_init(start);
-    this->check_init(end);
-    
-    this->RESET("a");
-    this->RESET("b");
-    this->RESET("c");
-    this->RESET("d");
-    
-    std::string end_name = "END" + std::to_string(this->data->memory_offset);
-    this->data->put_symbol(end_name, true);
-    symbol* end_tmp = this->data->get_symbol(end_name);
-    
-    cout << end_tmp->offset << ":" << start->offset << ":" <<  end->offset<< endl;
-    
-    this->LOAD(end);
-    // this->PUT(); // 12
-    this->SWAP("b");
-    
-    this->generate_value_in_register(end_tmp->offset, "a");
-    // this->PUT(); // 8
-    this->SWAP("b");
-    this->STORE("b");
-    
-    // initializing iterator
-    this->LOAD(start);
-    // this->PUT(); // 3
-    this->SWAP("c");
-    
-    this->generate_value_in_register(iterator->offset, "d");
-    // this->SWAP("d");
-    // this->PUT(); // 7
-    this->SWAP("c");
-    this->STORE("d");
-    
-    //--
-    long long s = this->pc;
-    this->generate_value_in_register(end_tmp->offset, "b");
-    long long e = this->pc - s;
-    // this->LOAD("b");
-    // this->PUT(); // 12
-    // this->SWAP("b");
-    long long s1 = this->pc;
-    this->generate_value_in_register(iterator->offset, "c");
-    long long e1 = this->pc - s1;
-    // this->LOAD("c");
-    // this->PUT(); // 3
-    // this->SUB("b");
-    // this->PUT(); // -9
-    
-    // this->HALT();
-    
-    cond_label* label = new cond_label(this->pc + 4 + e1 + e + 1 + 3, 0);
-    
-    this->generate_value_in_register(end_tmp->offset, "b");
-    this->LOAD("b");                // + 1
-    this->PUT(); // 12
-    
-    this->SWAP("b");                // + 2
-    this->generate_value_in_register(iterator->offset, "c");
-    this->LOAD("c");                // + 3
-    this->PUT(); // 3
-    this->PUT(); // 3
-    this->SUB("b");                 // + 4
-    this->PUT(); // -9
-
-    if (to) {
-        // this->PUT(); // + 1 // -9
-        this->JPOS(); // JPOS j if r_a > 0 then k += j, elee k++;
-    } else {
-        this->JNEG();
-    }
-    
-    // cond_label* label = new cond_label(this->pc + 1, -this->pc);
-    return new for_label(iterator, start, end_tmp, label, false);
-    */
-    // cout << "for_first_block" <<
-    // symbol* iterator = this->data->get_symbol(iterator_name);
-    // this->check_init(start);
-    // this->check_init(end);
-    // cond_label* label = this->leq(start, end);
-    // // cout << ":::" << label->start << ":" << label->go_to << endl;
-    // // this->HALT();
-    // // this->while_block(label);
-    // this->JUMP(label->go_to - this->pc);
-    // this->if_block()
-    
     symbol* iterator = this->data->get_symbol(iterator_name);
     this->check_init(start);
     this->check_init(end);
@@ -181,10 +93,6 @@ for_label* Code::for_first_block(std::string iterator_name, symbol* start, symbo
     std::string end_name = "END" + std::to_string(this->data->memory_offset);
     this->data->put_symbol(end_name, true);
     symbol* end_tmp = this->data->get_symbol(end_name);
-    
-    // this->RESET("                   a");
-    long long jumping = this->pc;
-    cout << "JUMPING: " << this->pc << endl;
     
     this->LOAD(end);
     this->SWAP("b");
@@ -205,97 +113,51 @@ for_label* Code::for_first_block(std::string iterator_name, symbol* start, symbo
     
     long long sum = stependtmpend + stepiteratorend;
     
-    // this->generate_value_in_register(7, "a");
-    // this->LOAD("a");
-    // this->PUT();
-    
-    // this->HALT();
-    
     this->generate_value_in_register(end_tmp->offset, "a");
     this->LOAD("a");
     this->SWAP("b");
     this->generate_value_in_register(iterator->offset, "a");
     this->LOAD("a");
-    // this->printregister();
     
     this->SUB("b");
-    // this->PUT();
-    // this->HALT();
-    
-    // this->PUT();
-    
-
     cout << "JUMPING 2:" << this->pc << ":" << sum << endl;
     cond_label* label = new cond_label(this->pc + sum + 4, this->pc );
     
-    this->generate_value_in_register(end_tmp->offset, "a");
-    this->LOAD("a");
-    this->SWAP("b");
-    this->generate_value_in_register(iterator->offset, "a");
-    this->LOAD("a");
-    this->SUB("b");
+    this->generate_value_in_register(end_tmp->offset, "a"); // -----|
+    this->LOAD("a");  // ładowanie wartości, koniec zakresu         |
+    this->SWAP("b");                                        //      |
+    this->generate_value_in_register(iterator->offset, "a");// -----|---> to się wykona sum razy, musimy to wiedzieć, żeby wiedzieć ile potrzebujemy SHIFT'ów i INC/DEC aby osoągnąc offset
+    this->LOAD("a"); // ładowanie wartości, iterator
+
+    this->SUB("b"); // odejmowanie i sprawdzenie dopóki będzie spełniać warunek
     
-    this->JPOS();
+    if (to) {
+        this->JPOS();
+    } else {
+        this->JNEG();
+    }
+    
     return new for_label(iterator, start, end_tmp, label, false);
 }
 
 void Code::for_second_block(for_label* label, bool to) {
-    /*
-    cout << "for_second_block" << endl;
-    if (label->unroll) {
-    } else {
-        // cout << "F2NDBLOCK " << label->iterator->offset << endl;
-        // this->LOAD(label->iterator->offset);
-        this->generate_value_in_register(label->iterator->offset, "a");
-        this->LOAD("a");
-        // this->PUT(); // 3
-        // this->PUT();
-        // this->HALT();
-        // this->LOAD("a");
-        // this->PUT();
-        // this->HALT();
-        // this->PUT();
-        if (to) {
-            this->INC("a");
-            // this->DEC("a");
-        } else {
-            this->DEC("a");
-        }
-        // this->PUT(); // 4
-        
-        this->SWAP("e");
-        this->generate_value_in_register(label->iterator->offset, "a");
-        // this->PUT(); // 7
-        this->SWAP("e");
-        this->STORE("e");
-        
-        this->generate_value_in_register(7, "a");
-        this->LOAD("a");
-        // this->PUT();
-        
-        // this->HALT();
-        
-        this->JUMP(-label->jump_label->start);
-        this->code[label->jump_label->start] += std::to_string(this->pc - label->jump_label->start); // to na pewno git
-        cout << label->jump_label->start << endl;
-    }
-    */
     cout << ":" << label->iterator->offset << endl;
     this->generate_value_in_register(label->iterator->offset, "a");
     this->LOAD("a");
-    this->INC("a");
+
+    if (to) {
+        this->INC("a");
+    } else {
+        this->DEC("a");
+    }
+    
     this->SWAP("b");
     this->generate_value_in_register(label->iterator->offset, "c");
     this->SWAP("b");
     this->STORE("c");
 
-    cout << "qwert" << label->jump_label->go_to << ":" << this->pc << endl;
-    cout << this->pc - label->jump_label->go_to << endl;
     this->JUMP(- (this->pc - label->jump_label->go_to));
-    // this->JUMP(-label->jump_label->go_to - 1);
-    this->code[label->jump_label->start] += to_string(this->pc - label->jump_label->start); // to na pewno git
-    cout << label->jump_label->start << endl;
-    
+    this->code[label->jump_label->start] += to_string(this->pc - label->jump_label->start);
 }
 
 void Code::write(symbol* sym) {
@@ -312,6 +174,12 @@ void Code::write(symbol* sym) {
         this->generate_value_in_register(sym->offset, "a");
         this->LOAD("a");
         this->PUT();
+    // } else if (sym->is_iterator) {
+    //     cout << "NAME:" << sym->name << endl;
+    //     this->generate_value_in_register(sym->offset, "a");
+    //     this->LOAD("a");
+    //     this->PUT();
+    //     // this->HALT();
     } else {
         this->check_init(sym);
         this->LOAD(sym->offset);
@@ -927,7 +795,7 @@ void Code::init_const(symbol* sym) {
 
 void Code::check_init(symbol* sym) {
     // CONDITION:
-    if (sym->is_array_cell || sym->is_addr_cell) {
+    if (sym->is_array_cell || sym->is_addr_cell || sym->is_iterator) {
         return;
     }
     if (!sym->is_init) {
