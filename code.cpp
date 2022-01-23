@@ -309,7 +309,17 @@ void Code::minus(symbol* a, symbol* b) {
         this->LOAD(a->offset);
         this->LOAD("a");
         this->SWAP("f");
-        this->generate_value_in_register(b->value, "a");
+    
+        // NOTE
+        // this->generate_value_in_register(b->value, "a");
+        // tak nie możemy napisać, bo 
+        //  1* b->value jest tylko i wyłącznie dla stałych
+        //  2* nawet jeżli powyższa wartość była by spełniona
+        //      to musimu liczbyć nowe wartości, a jak robimy skoki, to byśmy
+        //      musieli wiedzieć o ile skakać, niewykonalne
+        //      : (patrz. podobnie jak w FOR)
+        
+        this->LOAD(b->offset);
         this->SWAP("f");
         this->SUB("f");
     } else {
@@ -584,6 +594,7 @@ cond_label* Code::le(symbol* a, symbol* b) {
 cond_label* Code::ge(symbol* a, symbol* b) {
     long long start = this->pc;
     this->minus(a, b);
+    // this->PUT();
     this->JPOS(2);
     long long addr = this->pc;
     this->JUMP();

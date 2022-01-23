@@ -1,0 +1,25 @@
+VAR
+    i, j, k, arr[0:5]
+BEGIN
+    i ASSIGN 5;
+    j ASSIGN 3;
+    arr[j] ASSIGN 5;
+    arr[i] ASSIGN 3;
+    FOR q FROM 0 TO 5 DO
+        IF arr[j] GE 3 THEN
+            WRITE 1;
+            arr[j] ASSIGN arr[j] MINUS 2;
+        ELSE
+            WRITE 0;
+            arr[j] ASSIGN arr[j] MINUS 1;
+        ENDIF
+    ENDFOR
+    
+    IF 7 GE 6 THEN
+        WRITE 128;
+    ELSE
+        WRITE 256;
+    ENDIF
+END
+
+(110000)

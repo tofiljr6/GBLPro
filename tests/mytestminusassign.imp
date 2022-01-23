@@ -39,5 +39,13 @@ BEGIN
     WRITE arr[6]; ( = -55 ) 
     WRITE k;      ( =   7 )
     
+    i ASSIGN 0;
+    j ASSIGN 1;
+    arr[i] ASSIGN 5;
+    arr[j] ASSIGN 10;
+    s ASSIGN arr[i] MINUS arr[j];
+    arr[i] ASSIGN arr[j] PLUS 1;
     
+    WRITE s; (-5)
+    WRITE arr[i]; (11)
 END
