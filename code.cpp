@@ -433,63 +433,158 @@ void Code::mod(symbol* a, symbol *b) {
         this->SWAP("b");
         this->LOAD(b->offset);
         this->LOAD("a");
-        this->SWAP("c");
+        // this->SWAP("a");
     } else if (!a->is_addr_cell && b->is_addr_cell) {
         this->LOAD(b->offset);
         this->LOAD("a");
         this->SWAP("c");
         this->LOAD(a->offset);
-        this->SWAP("b");
+        // this->SWAP("a");
     } else if (a->is_addr_cell && !b->is_addr_cell) {
         this->LOAD(a->offset);
         this->LOAD("a");
         this->SWAP("b");
         this->LOAD(b->offset);
-        this->SWAP("c");
+        // this->SWAP("a");
     } else {
         this->LOAD(a->offset);
         this->SWAP("b");
         this->LOAD(b->offset);
-        this->SWAP("c");
+        // this->SWAP("a");
     }
     
-    this->RESET("a"); //  r_a = 0, r_b = 15, r_c = 3
-    // r_a wartośc b
-    // r_b rejest pusty
-    // r_c wartość a
+    this->RESET("g");
+    this->RESET("e");
+    this->RESET("h");
+    this->RESET("f");
+    this->RESET("c");
+    this->INC("c");
+    this->RESET("d");
+    this->DEC("d");
     
-    this->SWAP("b");
-    this->SWAP("c");
+    this->RESET("g");
+    this->RESET("e");
+    this->RESET("h");
+    this->RESET("f");
+    this->RESET("c");
     
-    this->JZERO(19);
-
-    this->SWAP("c");
-    this->JPOS(4);
-    this->SWAP("b");
-    this->SUB("b");
-    this->RESET("b");
-
-    this->SWAP("c");
-    this->JNEG(7);
-
-    this->SWAP("c");
-    this->SUB("c");
-    this->JNEG(2);
-    this->JUMP(-2);
-    this->ADD("c");
-    this->JUMP(6);
-    
-
     this->SWAP("c");
     this->ADD("c");
-    this->JNEG(2);
-    this->JUMP(-2);
-    
-    this->SUB("c");
+    this->SWAP("c");
+    this->JZERO(74);
+    this->JPOS(6);
+    this->INC("e");
+    this->INC("e");
+    this->SWAP("f");
+    this->SUB("f");
+    this->RESET("f");
     this->SWAP("b");
+    this->JZERO(66);
+    this->JPOS(5);
+    this->INC("e");
+    this->SWAP("f");
+    this->SUB("f");
+    this->RESET("f");
+    // h=dlugosc bitowa a
+    this->SWAP("g");
+    this->ADD("g");
+    this->JZERO(4);
+    this->SHIFT("d");
+    this->INC("h");
+    this->JUMP(-3);
+    this->SWAP("g");
+    // g dlugosc a wartosc
+    this->SWAP("b");
+    // g=dlugosc bitowa b
+    this->SWAP("f");
+    this->ADD("f");
+    this->JZERO(4);
+    this->SHIFT("d");
+    this->INC("g");
+    this->JUMP(-3);
+    this->SWAP("f");
+    this->SWAP("b");
+    this->SWAP("h");
+    // roznica dlugosci
+    this->SUB("g");
+    this->JNEG(44);
+    this->RESET("f");
+    this->SWAP("f");
+    this->ADD("f");
+    this->SWAP("f");
+    this->INC("f");
+    // a roznica h g
+    // wyrownanie do lewej
+    this->JZERO(10);
+    this->SWAP("b");
+    this->INC("d");
+    this->INC("d");
+    this->SHIFT("d");
+    this->DEC("d");
+    this->DEC("d");
+    this->DEC("b");
+    this->SWAP("b");
+    this->JUMP(-9);
+    this->SWAP("h");
+    // a i wyrownane b
+    this->RESET("h");
+    this->SWAP("f");
+    // petla
+    this->JZERO(23);
+    this->RESET("g");
+    this->SWAP("g");
+    this->ADD("f");
     this->SUB("b");
-    
+    this->SWAP("h");
+    this->INC("d");
+    this->INC("d");
+    this->SHIFT("d");
+    this->DEC("d");
+    this->DEC("d");
+    this->SWAP("h");
+    this->JNEG(5);
+    this->INC("h");
+    this->SWAP("f");
+    this->SUB("b");
+    this->SWAP("f");
     this->SWAP("b");
+    this->SHIFT("d");
+    this->SWAP("b");
+    this->SWAP("g");
+    this->DEC("a");
+    this->JUMP(-22);
+    this->SWAP("f");
+    this->JUMP(2);
+    this->SWAP("h");
+    // spr
+    this->SWAP("e");
+    this->JZERO(21);
+    this->DEC("a");
+    this->JZERO(13);
+    this->DEC("a");
+    this->JZERO(7);
+    // dwa minusy
+    this->RESET("g");
+    this->SWAP("e");
+    this->SWAP("g");
+    this->SUB("g");
+    this->SWAP("e");
+    this->JUMP(11);
+    // minus w B
+    this->SWAP("e");
+    this->ADD("c");
+    this->SWAP("e");
+    this->JUMP(7);
+    // minus w A
+    this->RESET("g");
+    this->SWAP("e");
+    this->SWAP("g");
+    this->SUB("g");
+    this->ADD("c");
+    this->SWAP("e");
+    this->SWAP("e");
+    this->RESET("c");
+    this->INC("c");
 }
 
 void Code::div(symbol* a, symbol* b) {
@@ -510,24 +605,24 @@ void Code::div(symbol* a, symbol* b) {
         this->SWAP("b");
         this->LOAD(b->offset);
         this->LOAD("a");
-        this->SWAP("g");
+        // this->SWAP("a");
     } else if (!a->is_addr_cell && b->is_addr_cell) {
         this->LOAD(b->offset);
         this->LOAD("a");
         this->SWAP("b");
         this->LOAD(a->offset);
-        this->SWAP("g");
+        // this->SWAP("a");
     } else if (a->is_addr_cell && !b->is_addr_cell) {
         this->LOAD(a->offset);
         this->LOAD("a");
         this->SWAP("b");
         this->LOAD(b->offset);
-        this->SWAP("g");
+        // this->SWAP("a");
     } else {
         this->LOAD(a->offset);
         this->SWAP("b");
         this->LOAD(b->offset);
-        this->SWAP("a");
+        // this->SWAP("a");
     }
 
     this->RESET("c");
@@ -648,29 +743,29 @@ cond_label* Code::eq(symbol* a, symbol* b) {
     long long start = this->pc;
     this->minus(a, b);
     this->JZERO(2);
-    long long addr = this->pc;
+    long long ADDr = this->pc;
     this->JUMP();
     
-    return new cond_label(start, addr);
+    return new cond_label(start, ADDr);
 }
 
 cond_label* Code::neq(symbol* a, symbol* b) {
     long long start = this->pc;
     this->minus(a, b);
     this->JZERO();
-    long long addr = this->pc - 1;
+    long long ADDr = this->pc - 1;
     
-    return new cond_label(start, addr);
+    return new cond_label(start, ADDr);
 }
 
 cond_label* Code::le(symbol* a, symbol* b) {
     long long start = this->pc;
     this->minus(a, b);
     this->JNEG(2);
-    long long addr = this->pc;
+    long long ADDr = this->pc;
     this->JUMP();
     
-    return new cond_label(start, addr);
+    return new cond_label(start, ADDr);
 }
 
 cond_label* Code::ge(symbol* a, symbol* b) {
@@ -678,28 +773,28 @@ cond_label* Code::ge(symbol* a, symbol* b) {
     this->minus(a, b);
     // this->PUT();
     this->JPOS(2);
-    long long addr = this->pc;
+    long long ADDr = this->pc;
     this->JUMP();
     
-    return new cond_label(start, addr);
+    return new cond_label(start, ADDr);
 }
 
 cond_label* Code::leq(symbol* a, symbol* b) {
     long long start = this->pc;
     this->minus(a, b);
     this->JPOS();
-    long long addr = this->pc - 1;
+    long long ADDr = this->pc - 1;
     
-    return new cond_label(start, addr);
+    return new cond_label(start, ADDr);
 }
 
 cond_label* Code::geq(symbol* a, symbol* b) {
     long long start = this->pc;
     this->minus(a, b);
     this->JNEG();
-    long long addr = this->pc - 1;
+    long long ADDr = this->pc - 1;
 
-    cond_label* label = new cond_label(start, addr);
+    cond_label* label = new cond_label(start, ADDr);
     return label;
 }
 
@@ -728,10 +823,10 @@ void Code::printregister() {
 // VALUES & PIDs
 
 symbol* Code::get_num(long long num) {
-    // get constant if its declared
+    // get constant if its DEClared
     if (this->data->check_context(std::to_string(num))) {
         return this->data->get_symbol(std::to_string(num));
-    } else {  // declare const
+    } else {  // DEClare const
         this->data->put_symbol(std::to_string(num), true);
         return this->data->get_symbol(std::to_string(num));
     }
@@ -895,7 +990,7 @@ void Code::generate_value_in_register(long long value, string r) {
                     this->DEC("   a");
                 }
             }
-            // to shiftuje to rejestru a
+            // to SHIFTuje to rejestru a
             this->SHIFT("   h");
         }
 
