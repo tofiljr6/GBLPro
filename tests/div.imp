@@ -1,0 +1,46 @@
+(
+    > 3
+    > 3
+    > -4
+    > -4
+    > 3
+    > 3
+    > -4
+    > -4
+)
+VAR
+    a, b, c, arr[0:5]
+BEGIN
+    a ASSIGN 26;
+    b ASSIGN 7;
+    c ASSIGN a DIV b;
+    arr[0] ASSIGN 26;
+    arr[1] ASSIGN 7;
+    
+    c ASSIGN a DIV b;
+    WRITE c;
+    c ASSIGN arr[0] DIV arr[1];
+    WRITE c;
+    
+    b ASSIGN -1 TIMES b; ( a,-b )
+    arr[1] ASSIGN -1 TIMES arr[1]; ( a,-b )
+    
+    c ASSIGN a DIV b;
+    WRITE c;
+    c ASSIGN arr[0] DIV arr[1];
+    WRITE c;
+
+    a ASSIGN a TIMES -1; ( -a,-b )
+    c ASSIGN a DIV b;
+    WRITE c;
+    arr[0] ASSIGN arr[0] TIMES -1; ( -a,-b )
+    c ASSIGN arr[0] DIV arr[1];
+    WRITE c;
+
+    b ASSIGN -1 TIMES b; ( -a,b )
+    arr[1] ASSIGN -1 TIMES arr[1]; ( -a,b )
+    c ASSIGN a DIV b;
+    WRITE c;
+    c ASSIGN arr[0] DIV arr[1];
+    WRITE c;
+END

@@ -503,63 +503,145 @@ void Code::div(symbol* a, symbol* b) {
         this->SHIFT("b");
         return;
     }
-    
-    // przygotowanie zależne od zmiennych
-    // tak aby w rejestrze
-    // r_b znajdowała się wartość symbolu a
-    // r_c znajdowała się wartość symbolu b
-    // w r_a przechowywać będziemy ile już razy przemnożyliśmy
+
     if (a->is_addr_cell && b->is_addr_cell) {
         this->LOAD(a->offset);
         this->LOAD("a");
-        this->SWAP("c");
+        this->SWAP("b");
         this->LOAD(b->offset);
         this->LOAD("a");
-        this->SWAP("a");
+        this->SWAP("g");
     } else if (!a->is_addr_cell && b->is_addr_cell) {
         this->LOAD(b->offset);
         this->LOAD("a");
-        this->SWAP("c");
+        this->SWAP("b");
         this->LOAD(a->offset);
-        this->SWAP("a");
-        this->SWAP("c");    // REFACTOR: mogę sie pozbyć tego SWAP'a
+        this->SWAP("g");
     } else if (a->is_addr_cell && !b->is_addr_cell) {
         this->LOAD(a->offset);
         this->LOAD("a");
-        this->SWAP("c");
+        this->SWAP("b");
         this->LOAD(b->offset);
-        this->SWAP("a");
+        this->SWAP("g");
     } else {
         this->LOAD(a->offset);
-        this->SWAP("c");
+        this->SWAP("b");
         this->LOAD(b->offset);
         this->SWAP("a");
     }
-    this->RESET("b");
-    
-    this->JZERO(18);
-        this->SWAP("c");
-        this->JPOS(4); // if a is neg changes it to pos
-        this->SWAP("b");
-        this->SUB("b");
-        this->RESET("b");
 
-        this->SWAP("c");
-        this->JNEG(6);
-        //b+
-        this->SWAP("c");
-        this->SUB("c");
-        this->JNEG(8);
-        this->INC("b");
-        this->JUMP(-3);
-        //b-
-        this->SWAP("c");
-        this->ADD("c");
-        this->JNEG(3);
-        this->DEC("b");
-        this->JUMP(-3);
-        
-    this->SWAP("b"); // znajduje się wynik w r_b, a result musimy przechować w r_a
+    this->RESET("c");
+    this->RESET("d");
+    this->RESET("e");
+    this->RESET("h");
+    this->RESET("f");
+
+    this->INC("c");
+    this->DEC("d");
+
+    this->JZERO(66);
+    this->JPOS(6);
+    this->INC("e");
+    this->INC("e");
+    this->SWAP("f");
+    this->SUB("f");
+    this->RESET("f");
+    this->SWAP("b");
+    this->JZERO(58);
+    this->JPOS(5);
+    this->INC("e");
+    this->SWAP("f");
+    this->SUB("f");
+    this->RESET("f");
+    // h=dlugosc bitowa a
+    this->SWAP("g");
+    this->ADD("g");
+    this->JZERO(4);
+    this->SHIFT("d");
+    this->INC("h");
+    this->JUMP(-3);
+    this->SWAP("g");
+    // g dlugosc a wartosc
+    this->SWAP("b");
+    // g=dlugosc bitowa b
+    this->SWAP("f");
+    this->ADD("f");
+    this->JZERO(4);
+    this->SHIFT("d");
+    this->INC("g");
+    this->JUMP(-3);
+    this->SWAP("f");
+    this->SWAP("b");
+    this->SWAP("h");
+    // roznica dlugosci
+    this->SUB("g");
+    this->JNEG(35);
+    this->RESET("f");
+    this->SWAP("f");
+    this->ADD("f");
+    this->SWAP("f");
+    this->INC("f");
+    // a roznica h g
+    // wyrownanie do lewej
+    this->JZERO(6);
+    this->SWAP("b");
+    this->SHIFT("c");
+    this->DEC("b");
+    this->SWAP("b");
+    this->JUMP(-5);
+    this->SWAP("h");
+    // a i wyrownane b
+    this->RESET("h");
+    this->SWAP("f");
+    // petla
+    this->JZERO(19);
+    this->RESET("g");
+    this->SWAP("g");
+    this->ADD("f");
+    this->SUB("b");
+    this->SWAP("h");
+    this->SHIFT("c");
+    this->SWAP("h");
+    this->JNEG(5);
+    this->INC("h");
+    this->SWAP("f");
+    this->SUB("b");
+    this->SWAP("f");
+    this->SWAP("b");
+    this->SHIFT("d");
+    this->SWAP("b");
+    this->SWAP("g");
+    this->DEC("a");
+    this->JUMP(-18);
+    this->JUMP(6);
+    this->SWAP("h");
+    this->SWAP("f");
+    this->ADD("f");
+    this->SWAP("f");
+    this->RESET("h");
+    this->SWAP("h");
+
+    // sprawdzenie
+    this->SWAP("e");
+    this->JZERO(16);
+    this->DEC("a");
+    this->JZERO(4);
+    this->DEC("a");
+    this->JZERO(2);
+    // dwa minusy
+    this->JUMP(11);
+    // jeden minus
+    this->RESET("g");
+    this->SWAP("e");
+    this->SWAP("g");
+    this->SUB("g");
+    this->SWAP("e");
+    this->SWAP("f");
+    this->JZERO(4);
+    this->SWAP("e");
+    this->SUB("c");
+    this->SWAP("e");
+    this->SWAP("e");
 }
 
 cond_label* Code::eq(symbol* a, symbol* b) {
@@ -629,6 +711,18 @@ void Code::printregister() {
     this->SWAP("c");
     this->PUT();
     this->SWAP("c");
+    this->SWAP("d");
+    this->PUT();
+    this->SWAP("d");
+    this->SWAP("e");
+    this->PUT();
+    this->SWAP("e");
+    this->SWAP("f");
+    this->PUT();
+    this->SWAP("f");
+    this->SWAP("g");
+    this->PUT();
+    this->SWAP("g");
 }
 
 // VALUES & PIDs
