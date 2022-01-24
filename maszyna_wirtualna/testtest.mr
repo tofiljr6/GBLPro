@@ -1,0 +1,95 @@
+void Code::times(VALUE *value1, VALUE *value2)
+{
+    Register mainReg = Registers::A;
+    Register regB = Registers::B;
+    Register regG = Registers::G;
+    Register shiftLeft = Registers::C;
+    Register shiftRight = Registers::D;
+    Register regH = Registers::H;
+    Register regF = Registers::F;
+    this->load_value(value1);
+    this->instructions.push_back(Instructions::swap(regB));
+    this->codePointer++;
+    this->load_value(value2);
+    //MNIEJSZY DRUGI OPT
+    // wartosci w a i b
+    this->instructions.push_back(Instructions::swap(regB));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::reset(regG));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::reset(regH));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::reset(regF));
+    this->codePointer++;
+    // check a
+    this->instructions.push_back(Instructions::jzero(27));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::jpos(4));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::dec(regH));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::swap(regF));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::sub(regF));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::swap(regB));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::swap(regG));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::swap(regB));
+    this->codePointer++;
+    // check b
+    this->instructions.push_back(Instructions::jzero(20));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::swap(regB));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::reset(regF));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::swap(regF));
+    this->codePointer++;
+    // parzystposc B
+    this->instructions.push_back(Instructions::add(regB));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::shift(shiftRight));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::shift(shiftLeft));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::sub(regB));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::jzero(4));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::swap(regF));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::add(regG));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::jump(2));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::swap(regF));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::swap(regG));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::shift(shiftLeft));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::swap(regG));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::swap(regB));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::shift(shiftRight));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::swap(regB));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::jump(-20));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::swap(regH));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::jzero(4));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::reset(mainReg));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::sub(regB));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::jump(2));
+    this->codePointer++;
+    this->instructions.push_back(Instructions::swap(regB));
+    this->codePointer++;
+}
