@@ -337,7 +337,7 @@ void Code::times(symbol* a, symbol* b) {
     
     // small optymalisation
     if (b->is_const && b->value == 2) {
-        cout << "1" << endl;
+        // cout << "1" << endl;
         this->LOAD(a);
         this->RESET("b");
         this->INC("b");
@@ -346,7 +346,7 @@ void Code::times(symbol* a, symbol* b) {
     }
     // small optymalisation
     if (a->is_const && a->value == 2) {
-        cout << "2" << endl;
+        // cout << "2" << endl;
         this->LOAD(b);
         this->RESET("b");
         this->INC("b");
@@ -354,22 +354,17 @@ void Code::times(symbol* a, symbol* b) {
         return;
     }
     
-    // przygotowanie zależne od zmiennych
-    // tak aby w rejestrze
-    // r_b znajdowała się wartość symbolu a
-    // r_c znajdowała się wartość symbolu b
-    // w r_a przechowywać będziemy ile już razy przemnożyliśmy
     if (a->is_addr_cell && b->is_addr_cell) {
         this->LOAD(a->offset);
         this->LOAD("a");
         this->SWAP("b");
         this->LOAD(b->offset);
         this->LOAD("a");
-        this->SWAP("c");
+        this->SWAP("b");
     } else if (!a->is_addr_cell && b->is_addr_cell) {
         this->LOAD(b->offset);
         this->LOAD("a");
-        this->SWAP("c");
+        this->SWAP("b");
         this->LOAD(a->offset);
         this->SWAP("b");
     } else if (a->is_addr_cell && !b->is_addr_cell) {
@@ -377,45 +372,66 @@ void Code::times(symbol* a, symbol* b) {
         this->LOAD("a");
         this->SWAP("b");
         this->LOAD(b->offset);
-        this->SWAP("c");
+        this->SWAP("b");
     } else {
         this->LOAD(a->offset);
         this->SWAP("b");
         this->LOAD(b->offset);
-        this->SWAP("c");
+        this->SWAP("b");
     }
     
-    this->RESET("a");
+    
+    this->RESET("c");
     this->RESET("d");
     this->RESET("e");
     this->RESET("f");
     this->RESET("g");
     this->RESET("h");
     
-    // pod rejestrem 'b' teraz mam mieć wartośc symbolu 'a',
-    // pod rejestrem 'c' teraz mam mieć wartośc symbolu 'b',
+    this->INC("c");
+    this->DEC("d");
+
+    // check a
+    this->JZERO(27);
+    this->JPOS(4);
+    this->DEC("h");
+    this->SWAP("f");
+    this->SUB("f");
+    this->SWAP("b");
+    this->SWAP("g");
+    this->SWAP("b");
     
+    // check b
+    this->JZERO(20);
+    this->SWAP("b");
+    this->RESET("f");
+    this->SWAP("f");
+    
+    // parzystposc B
     this->ADD("b");
-    this->RESET("b");
-        
-    this->JZERO(15);
-        this->JNEG(7);
-        this->DEC("a");
-        this->SWAP("b");
-        this->ADD("c");
-        this->SWAP("b");
-        this->JZERO(9);
-        this->JUMP(-5);
-        
-        this->JPOS(7);
-        this->INC("a");
-        this->SWAP("b");
-        this->SUB("c");
-        this->SWAP("b");
-        this->JZERO(2);
-        this->JUMP(-5);
+    this->SHIFT("d");
+    this->SHIFT("c");
+    this->SUB("b");
+    this->JZERO(4);
+    this->SWAP("f");
+    this->ADD("g");
+    this->JUMP(2);
+    this->SWAP("f");
+    this->SWAP("g");
+    this->SHIFT("c");
+    this->SWAP("g");
+    this->SWAP("b");
+    this->SHIFT("d");
+    this->SWAP("b");
+    this->JUMP(-20);
+    this->SWAP("h");
+    this->JZERO(4);
+    this->RESET("a");
+    this->SUB("b");
+    this->JUMP(2);
+    this->SWAP("b");
     
-    this->SWAP("b"); // znajduje się wynik w r_b, a result musimy przechować w r_a
+    // this->printregister();
 }
 
 void Code::mod(symbol* a, symbol *b) {
@@ -1012,7 +1028,6 @@ void Code::init_const(symbol* sym) {
 }
 
 void Code::check_init(symbol* sym) {
-    // CONDITION:
     if (sym->is_array_cell || sym->is_addr_cell || sym->is_iterator) {
         return;
     }
